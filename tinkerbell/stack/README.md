@@ -7,7 +7,7 @@ This chart installs the full Tinkerbell stack.
 ```bash
 helm dependency build stack/
 trusted_proxies=$(kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}' | tr ' ' ',')
-helm install stack-release stack/ --create-namespace --namespace tink-system --wait --set "boots.trustedProxies=${trusted_proxies}" --set "hegel.trustedProxies=${trusted_proxies}"
+helm install stack-release stack/ --create-namespace --namespace tink-system --wait --set "boots.trustedProxies={${trusted_proxies}}" --set "hegel.trustedProxies={${trusted_proxies}}"
 ```
 
 ## Introduction
@@ -51,7 +51,7 @@ Now, deploy the chart.
 ```bash
 helm dependency build stack/
 trusted_proxies=$(kubectl get nodes -o jsonpath='{.items[*].spec.podCIDR}' | tr ' ' ',')
-helm install stack-release stack/ --create-namespace --namespace tink-system --wait --set "boots.trustedProxies=${trusted_proxies}" --set "hegel.trustedProxies=${trusted_proxies}"
+helm install stack-release stack/ --create-namespace --namespace tink-system --wait --set "boots.trustedProxies={${trusted_proxies}}" --set "hegel.trustedProxies={${trusted_proxies}}"
 ```
 
 These commands install the Tinkerbell Stack chart in the `tink-system` namespace with the release name of `stack-release`.

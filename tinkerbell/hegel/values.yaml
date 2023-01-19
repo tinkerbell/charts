@@ -1,5 +1,5 @@
 deploy: true
-trustedProxies: ""
+trustedProxies: []
 name: hegel
 image: quay.io/tinkerbell/hegel:v0.10.1
 imagePullPolicy: IfNotPresent

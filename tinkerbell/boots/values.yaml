@@ -17,7 +17,7 @@ roleBindingName: boots-rolebinding
 deployment:
   strategy:
     type: Recreate
-trustedProxies: ""
+trustedProxies: []
 ports:
 - name: boots-dhcp
   port: 67

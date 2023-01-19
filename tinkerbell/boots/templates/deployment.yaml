@@ -37,7 +37,7 @@ spec:
           {{- end }}
           env:
             - name: TRUSTED_PROXIES
-              value: {{ required "missing trustedProxies" .Values.trustedProxies | quote }}
+              value: {{ join "," .Values.trustedProxies }}
             {{- range $i, $env := .Values.env }}
             - name: {{ $env.name | quote }}
               value: {{ $env.value | quote }}
