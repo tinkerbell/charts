@@ -8,6 +8,7 @@ service:
 deployment:
   port: 50061
   portName: hegel-http
+  nodePort: 30061
 resources:
   limits:
     cpu: 500m

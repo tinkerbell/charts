@@ -112,14 +112,23 @@ spec:
   - name: {{ .Values.hegel.name }}
     port: {{ .Values.hegel.deployment.port }}
     protocol: TCP
+    {{- if eq .Values.stack.service.type "NodePort" }}
+    nodePort: {{ .Values.hegel.deployment.nodePort }}
+    {{- end }}
   - name: {{ .Values.tink.server.name }}
     port: {{ .Values.tink.server.deployment.port }}
     protocol: TCP
+    {{- if eq .Values.stack.service.type "NodePort" }}
+    nodePort: {{ .Values.tink.server.deployment.nodePort }}
+    {{- end }}
   - name: {{ .Values.stack.hook.name }}
     port: {{ .Values.stack.hook.port }}
     protocol: TCP
+    {{- if eq .Values.stack.service.type "NodePort" }}
+    nodePort: {{ .Values.stack.hook.nodePort }}
+    {{- end }}
   {{- if not .Values.boots.hostNetwork }}
-  {{- include "boots.ports" ( merge ( dict "PortKey" "port" ) .Values.boots  ) | indent 2 }}
+  {{- include "boots.ports" ( merge ( dict "PortKey" "port" "ServiceType" .Values.stack.service.type) .Values.boots  ) | indent 2 }}
   {{- end }}
   selector:
     app: stack

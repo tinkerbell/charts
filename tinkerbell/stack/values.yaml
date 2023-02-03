@@ -12,6 +12,7 @@ stack:
     enabled: true
     name: hook-files
     port: 8080
+    nodePort: 31080
     image: alpine
     downloads:
       - url: https://github.com/tinkerbell/hook/releases/download/v0.7.0/hook_x86_64.tar.gz

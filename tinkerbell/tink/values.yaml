@@ -28,6 +28,7 @@ server:
   deployment:
     port: 42113
     portName: tink-grpc
+    nodePort: 32113
   args: ["--tls=false"]
   resources:
     limits:
