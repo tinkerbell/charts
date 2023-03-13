@@ -9,6 +9,8 @@ stack:
   loadBalancerIP: 192.168.2.112
   lbClass: kube-vip.io/kube-vip-class
   image: nginx:1.23.1
+  # clusterDNS represents the ip address of the cluster dns server ip. NodeLocalDNSCache ip for example is 169.254.20.10.
+  clusterDNS: 169.254.20.10
   hook:
     enabled: true
     name: hook-files
