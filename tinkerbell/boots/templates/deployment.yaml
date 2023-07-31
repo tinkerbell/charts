@@ -38,7 +38,6 @@ spec:
             - -ipxe-tftp-addr={{ printf "%v:%v" .Values.tftp.ip .Values.tftp.port }}
             - -http-addr={{ printf "%v:%v" .Values.http.ip .Values.http.port }}
             - -syslog-addr={{ printf "%v:%v" .Values.syslog.ip .Values.syslog.port }}
-            - -osie-path-override={{ printf "%v://%v:%v" .Values.osieBase.protocol $osieBaseIp .Values.osieBase.port }}
           {{- range .Values.additionalArgs }}
             - {{ . }}
           {{- end }}
@@ -47,10 +46,6 @@ spec:
               value: {{ required "missing trustedProxies" ( join "," .Values.trustedProxies | quote ) }}
             - name: DATA_MODEL_VERSION
               value: "kubernetes"
-            - name: FACILITY_CODE
-              value: "lab1"
-            - name: MIRROR_BASE_URL
-              value: {{ printf "%v://%v:%v" .Values.osieBase.protocol $osieBaseIp .Values.osieBase.port | quote }}
             - name: PUBLIC_IP
               value: {{ $remoteDhcpIp | quote }}
             - name: PUBLIC_SYSLOG_FQDN
@@ -59,10 +54,6 @@ spec:
               value: {{ printf "%s:%v" $tinkServerIp .Values.tinkServer.port | quote }}
             - name: TINKERBELL_TLS
               value: {{ .Values.tinkServer.tls | quote }}
-            - name: BOOTS_EXTRA_KERNEL_ARGS
-              value: {{ join " " ( append .Values.additionlKernelArgs ( printf "tink_worker_image=%s" ( required "missing tinkWorkerImage" .Values.tinkWorkerImage ) ) ) | quote }}
-            - name: BOOTS_LOG_LEVEL
-              value: {{ .Values.logLevel | quote }}
             {{- range .Values.additionalEnv }}
             - name: {{ .name | quote }}
               value: {{ .value | quote }}

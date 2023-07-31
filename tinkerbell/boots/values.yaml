@@ -5,7 +5,7 @@ deploy: true
 name: boots
 
 # The image used to launch the container.
-image: quay.io/tinkerbell/boots:v0.8.0
+image: quay.io/tinkerbell/boots:v0.9.0
 imagePullPolicy: IfNotPresent
 
 # The number of pods to run.
@@ -32,9 +32,6 @@ service:
   type: LoadBalancer
   class: kube-vip.io/kube-vip-class
   loadBalancerIP: ""
-
-# The log level for the container.
-logLevel: "info"
 
 # The network mode to launch the boots container. When true, the boots container will use the
 # host network.
