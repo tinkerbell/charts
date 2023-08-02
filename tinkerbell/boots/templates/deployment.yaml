@@ -55,6 +55,10 @@ spec:
               value: {{ printf "%s:%v" $tinkServerIp .Values.tinkServer.port | quote }}
             - name: TINKERBELL_TLS
               value: {{ .Values.tinkServer.tls | quote }}
+            - name: BOOTS_EXTRA_KERNEL_ARGS
+              value: {{ join " " ( append .Values.additionlKernelArgs ( printf "tink_worker_image=%s" ( required "missing tinkWorkerImage" .Values.tinkWorkerImage ) ) ) | quote }}
+            - name: BOOTS_LOG_LEVEL
+              value: {{ .Values.logLevel | quote }}
             {{- range .Values.additionalEnv }}
             - name: {{ .name | quote }}
               value: {{ .value | quote }}

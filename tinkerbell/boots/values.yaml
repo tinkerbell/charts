@@ -33,6 +33,9 @@ service:
   class: kube-vip.io/kube-vip-class
   loadBalancerIP: ""
 
+# The log level for the container.
+logLevel: "info"
+
 # The network mode to launch the boots container. When true, the boots container will use the
 # host network.
 hostNetwork: false
