@@ -18,6 +18,8 @@ stack:
     port: 8080
     image: alpine
     downloadsDest: /opt/hook
+    persistentStorage: true
+    storageClass: ceph-filesystem
     downloads:
       - url: https://github.com/tinkerbell/hook/releases/download/v0.8.1/hook_x86_64.tar.gz
         sha512sum: 29d8cf6991272eea20499d757252b07deba824eb778368192f9ab88b215a0dafa584e83422dac08feeb43ddce65f485557ad66210f005a81ab95fb53b7d8d424
