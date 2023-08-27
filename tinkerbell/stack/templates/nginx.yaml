@@ -84,10 +84,17 @@ spec:
       {{- end }}
       volumes:
       {{- if .Values.stack.hook.enabled }}
+      {{- if not .Values.stack.hook.persistentStorage }}
       - name: hook-artifacts
         hostPath:
           path: {{ .Values.stack.hook.downloadsDest }}
           type: DirectoryOrCreate
+      {{- end }}
+      {{- if .Values.stack.hook.persistentStorage }}
+      - name: hook-artifacts
+        persistentVolumeClaim:
+          claimName: hook-artifacts
+      {{- end }}
       {{- end }}
       - name: nginx-conf
         configMap:
@@ -95,6 +102,22 @@ spec:
           items:
             - key: nginx.conf
               path: nginx.conf.template
+{{- if .Values.stack.hook.persistentStorage }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: hook-artifacts
+spec:
+  {{- if .Values.stack.hook.storageClass }}
+  storageClassName: {{ .Values.stack.hook.storageClass }}
+  {{- end }}
+  accessModes:
+  - ReadWriteMany
+  resources:
+    requests:
+      storage: 50Gi
+{{- end }}
 {{- if .Values.stack.service.enabled }}
 ---
 apiVersion: v1
