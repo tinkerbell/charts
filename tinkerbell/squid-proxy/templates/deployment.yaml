@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Values.name }}
+  name: {{ .Values.name }}
+spec:
+  replicas: {{ .Values.squid.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.name }}
+    spec:
+      containers:
+        - name: squid-container
+          image: {{ .Values.squid.image }}
+          resources:
+            {{ toYaml .Values.squid.resources | nindent 12 }}
+          ports:
+            - containerPort: 3128
+            - containerPort: 4128
+          volumeMounts:
+            - name: squid-config-volume
+              mountPath: /etc/squid/
+            - mountPath: /etc/squid-cert
+              name: cert-volume
+      volumes:
+        - name: squid-config-volume
+          configMap:
+            name: squid-config
+        - name: cert-volume
+          hostPath:
+            path: /opt/hook
+            type: DirectoryOrCreate
