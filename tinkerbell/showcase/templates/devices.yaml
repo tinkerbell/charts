@@ -1,0 +1,251 @@
+{{- range $deviceId, $dev := .Values.hardware.devices }}
+
+{{- if not $dev.enabled }}
+# Device not enabled: {{$deviceId}}
+{{- else }}
+# Device enabled: {{$deviceId}}
+{{- $common := $.Values.hardware.common -}}
+{{- $mergedDevice := merge $dev $common }}
+{{- $hookObj := index $.Values.provision.hook $mergedDevice.hookRef }}
+{{- if not $hookObj }}{{- fail (printf "Device '%s', hookRef '%s': %s" $deviceId $mergedDevice.hookRef "hookRef not found") }}{{- end }}
+{{- $imageObj := index $.Values.provision.images $mergedDevice.imageRef }}
+{{- if not $imageObj }}{{- (printf "Device '%s', imageRef '%s': %s" $deviceId $mergedDevice.imageRef "imageRef not found") }}{{- end }}
+# Check sanity of arch across device / image / hook - they all must match
+# Device arch: {{$dev.arch}} Image arch: {{$imageObj.arch}} Hook arch: {{$hookObj.arch}}
+{{- if ne $imageObj.arch $hookObj.arch }}{{- fail (printf "Device '%s': '%s'" $deviceId "image and hook arch mismatch") }}{{- end }}
+{{- if ne $dev.arch $imageObj.arch }}{{- fail (printf "Device '%s': '%s'" $deviceId "device and image arch mismatch") }}{{- end }}
+{{- if ne $dev.arch $hookObj.arch }}{{- fail (printf "Device '%s': '%s'" $deviceId "device and hook arch mismatch") }}{{- end }}
+{{- $rootDiskDevice := required (printf "Device '%s' - %s" $deviceId "rootDisk is required") $mergedDevice.rootDisk }}
+{{- if not (hasPrefix "/dev" $rootDiskDevice) }}{{- fail (printf "Device '%s' (rootDisk '%s'): '%s'" $deviceId $rootDiskDevice "rootDisk does not begin with /dev") }}{{- end }}
+{{- $rootDiskRootfsPartitionNumber := printf "%s" $imageObj.rootfsPartitionNumber }}
+  # rootDiskRootfsPartitionNumber is {{$rootDiskRootfsPartitionNumber}}
+{{- $rootDiskRootfsPartitionDevice := "unknown" }}
+
+{{- if hasPrefix "/dev/disk/" $rootDiskDevice }}
+  # YES! {{$rootDiskDevice}} begins with /dev/disk
+{{- $rootDiskRootfsPartitionDevice = printf "%s-part%s" $rootDiskDevice $rootDiskRootfsPartitionNumber  }}
+{{- else }}
+  # NO! {{$rootDiskDevice}} does not begin with /dev/disk
+{{- if regexMatch "[0-9]$" $rootDiskDevice }}
+  # YES! {{$rootDiskDevice}} ends with a digit - REGEX MATCH
+{{- $rootDiskRootfsPartitionDevice = printf "%sp%s" $rootDiskDevice $rootDiskRootfsPartitionNumber  }}
+{{- else }}
+  # NO! {{$rootDiskDevice}} does not end with a digit - REGEX NOT MATCH
+{{- $rootDiskRootfsPartitionDevice = printf "%s%s" $rootDiskDevice $rootDiskRootfsPartitionNumber  }}
+{{- end }}
+{{- end }}
+  # Thus at the end of the day, $rootDiskRootfsPartitionDevice is {{$rootDiskRootfsPartitionDevice}}
+---
+apiVersion: "tinkerbell.org/v1alpha1"
+kind: Hardware
+metadata:
+  name: "{{ $deviceId }}-hardware"
+  labels:
+    "app.kubernetes.io/instance": "{{ $.Release.Name }}"
+    "app.kubernetes.io/part-of": "tinkerbell-showcase"
+spec:
+  disks:
+    - device: "{{ $rootDiskDevice }}"
+  metadata:
+    facility:
+      facility_code: sandbox
+    instance:
+      hostname: "{{ $deviceId }}"
+      id: "{{ $dev.mac }}"
+      operating_system:
+        distro: "ubuntu" # @TODO
+        os_slug: "ubuntu_20_04"
+        version: "20.04"
+  interfaces:
+    - dhcp:
+        arch: "{{ $dev.arch }}"
+        hostname: "{{ $deviceId }}"
+        ip:
+          address: "{{ $dev.ipv4.address }}"
+          netmask: "{{ $dev.ipv4.netmask }}"
+          gateway: "{{ $dev.ipv4.gateway }}"
+        lease_time: 86400
+        mac: "{{ $dev.mac }}"
+        name_servers:
+          {{- range $mergedDevice.ipv4.dns }}
+          - {{ . | quote }}
+          {{- end }}
+        uefi: {{ $dev.uefi }}
+      netboot:
+        allowPXE: true
+        allowWorkflow: true
+        ipxe: # @TODO
+          contents: |
+            echo Showcase starting for {{$deviceId}} with hook {{$mergedDevice.hookRef}} and image {{$mergedDevice.imageRef}}...
+            set download-url {{ $.Values.tinkerbell.hookURL }}
+            set kernel-params tink_worker_image=quay.io/tinkerbell/tink-worker:latest facility= syslog_host={{ $.Values.tinkerbell.syslogHost }} grpc_authority={{ $.Values.tinkerbell.grpcAuthority }} tinkerbell_tls=false worker_id={{$dev.mac}} hw_addr={{$dev.mac}} modules=loop,squashfs,sd-mod,usb-storage initrd={{ $hookObj.initrd }} {{$hookObj.kernelCommandLine}} {{ $dev.extraKernelCommandLine }}
+            echo Kernel image: ${download-url}/{{ $hookObj.kernel }}
+            echo Kernel initrd: ${download-url}/{{ $hookObj.initrd }}
+            echo Kernel cmdline: ${kernel-params}
+            kernel ${download-url}/{{ $hookObj.kernel }} ${kernel-params}
+            initrd ${download-url}/{{ $hookObj.initrd }}
+            boot
+---
+apiVersion: "tinkerbell.org/v1alpha1"
+kind: Template
+metadata:
+  name: "{{ $deviceId }}-template"
+  labels:
+    "app.kubernetes.io/instance": "{{ $.Release.Name }}"
+    "app.kubernetes.io/part-of": "tinkerbell-showcase"
+spec:
+  data: |
+    version: "0.1"
+    name: "{{ $deviceId }}-template"
+    global_timeout: 1800
+    tasks:
+      - name: "os-installation-{{ $deviceId }}"
+        worker: "{{ $dev.mac }}"
+        volumes:
+          - /dev:/dev
+          - /dev/console:/dev/console
+          - /lib/firmware:/lib/firmware:ro
+
+        actions:
+          - name: "stream-ubuntu-image-{{ $deviceId }}"
+            #image: quay.io/tinkerbell-actions/image2disk:v1.0.0
+            image: {{ $.Values.actions.repository }}/image2disk:{{ $.Values.actions.version }}
+            timeout: 600
+            environment:
+              DEST_DISK: "{{ $rootDiskDevice }}"
+              IMG_URL: "{{ $.Values.tinkerbell.imagesURL }}/{{ $imageObj.image }}"
+              COMPRESSED: true
+
+          {{- if $imageObj.doGrowPart }}
+          - name: "grow-partition-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{ $rootDiskRootfsPartitionDevice }}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/sh -c"
+              CMD_LINE: "growpart {{ $rootDiskDevice }} {{$rootDiskRootfsPartitionNumber}} && resize2fs {{$rootDiskRootfsPartitionDevice}}"
+          {{- end }}
+
+          - name: "fix-resolv-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/sh -c"
+              CMD_LINE: "echo 'list /etc/resolv.conf: '; ls -la /etc/resolv.conf; echo 'cat /etc/resolv.conf'; cat /etc/resolv.conf; echo 'moving...'; mv -v /etc/resolv.conf /etc/resolv.conf.orig.tink; echo 'nameserver {{ index $mergedDevice.ipv4.dns 0 }} ' > /etc/resolv.conf; echo 'new resolf.conf:' ; cat /etc/resolv.conf"
+
+
+          {{- if $imageObj.doUserAndSshSetup }}
+          - name: "install-openssl-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/sh -c"
+              CMD_LINE: "apt -y update && apt -y install openssl"
+          - name: "create-user-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/sh -c"
+              CMD_LINE: "useradd -p $(openssl passwd -1 tink) -s /bin/bash -d /home/tink/ -m -G sudo tink"
+          - name: "enable-ssh-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/sh -c"
+              CMD_LINE: "ssh-keygen -A; systemctl enable ssh.service; echo 'PasswordAuthentication yes' > /etc/ssh/sshd_config.d/60-cloudimg-settings.conf"
+          - name: "disable-apparmor-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/sh -c"
+              CMD_LINE: "systemctl disable apparmor; systemctl disable snapd"
+          - name: "write-netplan-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/writefile:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              DEST_DISK: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              DEST_PATH: /etc/netplan/config.yaml
+              CONTENTS: |
+                network:
+                  version: 2
+                  renderer: networkd
+                  ethernets:
+                    id0:
+                      match:
+                        name: en*
+                      dhcp4: true
+              UID: 0
+              GID: 0
+              MODE: 0644
+              DIRMODE: 0755
+          {{- end }}
+
+          - name: "revert-fix-resolv-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/sh -c"
+              CMD_LINE: "rm -v /etc/resolv.conf; mv -v /etc/resolv.conf.orig.tink /etc/resolv.conf"
+
+          {{- if eq $hookObj.bootMode "kexec" }}
+          - name: "kexec-{{ $deviceId }}"
+            image: ghcr.io/jacobweinstock/waitdaemon:latest
+            timeout: 90
+            pid: host
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              IMAGE: {{ $.Values.actions.repository }}/kexec:{{ $.Values.actions.version }}
+              WAIT_SECONDS: 1
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+          {{- end }}
+
+          {{- if eq $hookObj.bootMode "reboot" }}
+          - name: "reboot-{{ $deviceId }}"
+            image: ghcr.io/jacobweinstock/waitdaemon:latest
+            timeout: 90
+            pid: host
+            command: ["reboot"]
+            environment:
+              IMAGE: alpine
+              WAIT_SECONDS: 1
+            volumes:
+              - /var/run/docker.sock:/var/run/docker.sock
+          {{- end }}
+---
+apiVersion: "tinkerbell.org/v1alpha1"
+kind: Workflow
+metadata:
+  name: "{{ $deviceId }}-workflow"
+  labels:
+    "app.kubernetes.io/instance": "{{ $.Release.Name }}"
+    "app.kubernetes.io/part-of": "tinkerbell-showcase"
+spec:
+  templateRef: "{{ $deviceId }}-template"
+  hardwareRef: "{{ $deviceId }}-hardware"
+  hardwareMap:
+    device_1: "{{ $dev.mac }}"
+{{- end }}
+{{- end }}
