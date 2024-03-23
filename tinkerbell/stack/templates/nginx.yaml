@@ -1,6 +1,6 @@
 {{- if .Values.stack.enabled }}
 {{- $sourceInterface := .Values.stack.relay.sourceInterface -}}
-{{- $macvlanInterfaceName := printf "%s%s" "macvlan" (randNumeric 2) -}}
+{{- $macvlanInterfaceName := printf "%s%s" "macvlan" (.Values.stack.relay.macvlanIntfNumber | default (randNumeric 2)) -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:

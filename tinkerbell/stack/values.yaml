@@ -49,6 +49,7 @@ stack:
     # sourceInterface is the Host/Node interface to use for listening for DHCP broadcast packets.
     # When unset, the interface from the default route will be used.
     # sourceInterface: eno1
+    macvlanIntfNumber: null # string! if unset, will use a random interface number, which will cause each Helm deploy to restart the relay
     # TODO(jacobweinstock): add feature to be able to disable listening for broadcast traffic.
 
 # -- Overrides
