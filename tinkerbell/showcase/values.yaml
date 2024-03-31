@@ -40,7 +40,7 @@ provision:
       kernel: "vmlinuz-aarch64"
       initrd: "initramfs-aarch64"
       kernelCommandLine: ""
-      bootMode: kexec # kexec is no-go here, kernel problem? (persists after enabling CONFIG_KEXEC & trying to fix TB action)
+      bootMode: reboot # kexec is no-go here, kernel problem? (persists after enabling CONFIG_KEXEC & trying to fix TB action)
 
     "armbian-uefi-x86-edge":
       enabled: false
@@ -59,7 +59,7 @@ provision:
       kernel: "vmlinuz-armbian-uefi-arm64-edge"
       initrd: "initramfs-armbian-uefi-arm64-edge"
       kernelCommandLine: ""
-      bootMode: kexec # still no go with kexec -- this is a TB action problem for sure, not kernel problem
+      bootMode: reboot # still no go with kexec -- this is a TB action problem for sure, not kernel problem?
     
     "armbian-meson64-edge":
       enabled: false
