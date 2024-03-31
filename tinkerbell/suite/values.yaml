@@ -1,0 +1,79 @@
+# -- Overrides
+# The values defined here override those in the individual charts. Some of them require tweaking
+# before deployment as they are environment dependent; others are surfaced for convenience.
+#
+# See individual chart documentation for additional detail.
+
+# 67 - smee dhcp, hostNetwork; NodePort? (my guess is this requires hostNetwork, NodePort (kube-proxy) won't suffice
+# 69 - smee tftp, hostNetwork; NodePort? NodePort might or not suffice, no idea.
+# 514 - smee syslog, hostNetwork; NodePort
+# 7171 - smee http, should be directly exposed via hostNetwork (used for dhcp) anyway, but could be via NodePort or ingress too
+# 50061 - hegel http. either NodePort or ingress
+# 42113 - tink grpc. Either NodePort or ingress (special grpc_pass)
+
+# Scenarios to test:
+# simple bare k3s on bare vm (hostNetwork for everything, but maybe a few NodePorts needed for grpc and hegel)
+# k3s clustered 2+ nodes: NodePorts for everything, can run a replica of everything on each node, only one dhcp will ever be used
+
+hookImageServer:
+  enabled: true
+
+nodePort:
+  hookImageServer:
+    enabled: true
+    port: 32083
+  hegel: # @TODO this nodeport template
+    enabled: true
+    port: 32061
+  tinkGRPC:
+    enabled: true
+    port: 32013
+
+showcase:
+  enabled: true
+  hardware:
+    devices:
+      run-qemu-x86:
+        enabled: true
+      mekotronics-r58x-pro-via-usb: 
+        enabled: true
+  
+  
+  tinkerbell:
+    hostDirectory: "/opt/hook-jolly-roger" # This will be needed in smee one day as well, to serve DTB files over TFTP for u-boot
+    # These two should point to hookImageServer
+    hookURL: "http://192.168.99.2:32083"
+    imagesURL: "http://192.168.99.2:32083"
+    # points to smee at :514
+    syslogHost: "192.168.99.2"
+    # tink's grpc nodeport
+    grpcAuthority: "192.168.99.2:32013"
+    # @TODO one day use hegel to serve user-data and meta-data to _deployed cloud-init images_
+
+smee:
+  hostNetwork: true # no proxies, loadbalancers, or anything: it just runs as if directly on the k8s host.
+  logLevel: "debug"
+  tinkWorkerImage: quay.io/tinkerbell/tink-worker:v0.10.0
+  image: quay.io/tinkerbellrpardini/smee:latest-rpardini # custom build with updated ipxedust and arm64 NAPNULL for u-boot's PXE-via-EFI
+  # @TODO bug in smee chart, the values is under http: but the usage is not
+  trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
+  publicIP: 192.168.99.2 # Must be set
+  imagePullPolicy: Always # I re-push it there sometimes
+
+hegel:
+  image: quay.io/tinkerbell/hegel:v0.12.0
+  trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
+  nodePort:
+    enabled: true
+    port: 50061
+
+rufio:
+  image: quay.io/tinkerbell/rufio:v0.3.3
+
+tink:
+  controller:
+    image: quay.io/tinkerbell/tink-controller:latest # make sure we work with latest version
+    imagePullPolicy: Always
+  server:
+    image: quay.io/tinkerbell/tink:latest # to make sure we work with the la
+    imagePullPolicy: Always

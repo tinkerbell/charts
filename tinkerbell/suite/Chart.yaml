@@ -1,0 +1,25 @@
+apiVersion: v2
+name: suite
+description: A batteries-included Helm chart for Tinkerbell on a single node cluster using that host's network and NodePort services
+type: application
+version: 0.0.1
+
+dependencies:
+  - name: tink
+    version: "0.2.3"
+    repository: "file://../tink"
+  - name: smee
+    version: "0.3.2"
+    repository: "file://../smee"
+  - name: rufio
+    version: "0.2.8"
+    repository: "file://../rufio"
+  - name: hegel
+    version: "0.3.4"
+    repository: "file://../hegel"
+
+  # showcase chart!
+  - name: showcase
+    version: "0.0.1"
+    repository: "file://../showcase"
+    condition: showcase.enabled
