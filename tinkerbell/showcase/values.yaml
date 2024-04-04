@@ -94,7 +94,7 @@ provision:
       downloadFile: "hook-armbian-rk35xx-vendor.tar.gz"
       kernel: "vmlinuz-armbian-rk35xx-vendor"
       initrd: "initramfs-armbian-rk35xx-vendor"
-      kernelCommandLine: "acpi=off efi=noruntime splash=verbose"
+      kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
       bootMode: reboot
     
     "armbian-rk35xx-legacy":
@@ -169,6 +169,16 @@ provision:
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
       rootfsPartitionNumber: "1" # first partition, ext4 rootfs 
+    
+    "armbian-rpardini-r58x-vendor-uefi-cloud": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.03.31-armsurvivors-68/Armbian-unofficial_24.03.31-armsurvivors-68_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.xz"
+      image: "Armbian-unofficial_24.03.31-armsurvivors-68_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.gz"
+      conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
     
     "armbian-bookworm-meson64-current-cloud":
       enabled: false
@@ -302,10 +312,10 @@ hardware:
     "mekotronics-r58x-pro-via-usb":
       enabled: false
       arch: aarch64
-      mac: "3c:18:a0:15:9a:9f" # 3C18A0159A9F
+      mac: "3c:18:a0:15:9a:9f" # 3C18A0159A9F 
+      rootDisk: "/dev/nvme0NOENOENOENEyet"
       ipv4:
         address: "192.168.99.55"
-      hookRef: "armbian-rk35xx-legacy" # "armbian-rk35xx-vendor"
-      imageRef: "armbian-rpardini-r58x-vendor-uboot"
-      extraKernelCommandLine: "console=ttyFIQ0:1500000 " # console=tty1  # Last console defined "wins", thus use tty1 last if no serial console
-      rootDisk: "/dev/nvme0NOENOENOENEyet"
+      hookRef: "armbian-rk35xx-vendor"
+      imageRef: "armbian-rpardini-r58x-vendor-uefi-cloud" # "armbian-rpardini-r58x-vendor-uboot"
+      extraKernelCommandLine: "console=tty1 console=ttyFIQ0,1500000 " #    # Last console defined "wins", thus use tty1 last if no serial console
