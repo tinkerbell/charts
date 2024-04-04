@@ -17,8 +17,8 @@ provision:
   common:
     # Used together with downloadFile field in each hook;
     # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
-    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240331-0055/"
-    hookDownloadId: "20240331-0055" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240404-2216/"
+    hookDownloadId: "20240404-2216" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
   
   # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
   # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
@@ -94,6 +94,15 @@ provision:
       downloadFile: "hook-armbian-rk35xx-vendor.tar.gz"
       kernel: "vmlinuz-armbian-rk35xx-vendor"
       initrd: "initramfs-armbian-rk35xx-vendor"
+      kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
+      bootMode: reboot
+    
+    "armbian-rk3588-edge":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook-armbian-rk3588-edge.tar.gz"
+      kernel: "vmlinuz-armbian-rk3588-edge"
+      initrd: "initramfs-armbian-rk3588-edge"
       kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
       bootMode: reboot
     
