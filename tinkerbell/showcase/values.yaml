@@ -210,7 +210,7 @@ hardware:
       rootDisk: "/dev/sda"
       ipv4:
         address: "192.168.66.245"
-      hookRef: "armbian-uefi-x86-edge" # "default-hook-amd64" # defined above
+      hookRef: "armbian-uefi-x86-edge" # not really used in this case; Hook dev environment controls the kernel there
       imageRef: "ubuntu-jammy-cloud-amd64" # defined above
       extraKernelCommandLine: "console=ttyS0"
 
@@ -232,14 +232,25 @@ hardware:
     # Examples for virtual machines, ran outside of Hook's build system.
     # Most virtualization software has support for PXE booting.
     # You will need to have (bridging/etc) setup to get a proper IP address from a real Smee, etc.
-    "vm03":
+    "vm03": # For Armbian kernel Hook, and Ubuntu cloud image
       enabled: false
       arch: aarch64
       mac: "52:54:00:01:03:03"
       rootDisk: "/dev/vdb"
       ipv4:
         address: "192.168.99.41"
-      hookRef: "armbian-uefi-arm64-edge" # "default-hook-aarch64" # defined above
+      hookRef: "armbian-uefi-arm64-edge"
+      imageRef: "ubuntu-jammy-cloud-arm64"
+      extraKernelCommandLine: "console=ttyAMA0"
+    
+    "vm04": # For default arm64 kernel Hook, and Ubuntu cloud image
+      enabled: false
+      arch: aarch64
+      mac: "52:54:00:01:03:04"
+      rootDisk: "/dev/vdb"
+      ipv4:
+        address: "192.168.99.41"
+      hookRef: "default-hook-aarch64"
       imageRef: "ubuntu-jammy-cloud-arm64" # defined above
       extraKernelCommandLine: "console=ttyAMA0"
 
