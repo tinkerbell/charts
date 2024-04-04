@@ -6,6 +6,8 @@
 # Device enabled: {{$deviceId}}
 {{- $common := $.Values.hardware.common -}}
 {{- $mergedDevice := merge $dev $common }}
+# Getting hook from hookRef: '{{$mergedDevice.hookRef}}'
+{{- if not $mergedDevice.hookRef }}{{- fail (printf "Device '%s', hookRef '%s': %s" $deviceId $mergedDevice.hookRef "hookRef unset?") }}{{- end }}
 {{- $hookObj := index $.Values.provision.hook $mergedDevice.hookRef }}
 {{- if not $hookObj }}{{- fail (printf "Device '%s', hookRef '%s': %s" $deviceId $mergedDevice.hookRef "hookRef not found") }}{{- end }}
 {{- $imageObj := index $.Values.provision.images $mergedDevice.imageRef }}
