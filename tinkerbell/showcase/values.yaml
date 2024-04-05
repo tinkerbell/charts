@@ -138,6 +138,27 @@ provision:
       doGrowPart: true
       doUserAndSshSetup: true
       rootfsPartitionNumber: "1"
+      
+    "armbian-uefi-arm64-edge-cloud-k8s":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.04-armsurvivors-86/Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
+      image: "Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.gz"
+      conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
+      
+    "armbian-uefi-x86-edge-cloud-k8s":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.04-armsurvivors-86/Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
+      image: "Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.gz"
+      conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
+      
     
     "armbian-rpardini-rockpro64-edge-uboot":
       enabled: false
