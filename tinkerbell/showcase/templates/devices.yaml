@@ -192,7 +192,7 @@ spec:
                   ethernets:
                     id0:
                       match:
-                        name: en*
+                        name: e*
                       dhcp4: true
               UID: 0
               GID: 0
