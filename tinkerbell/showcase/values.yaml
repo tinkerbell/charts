@@ -138,7 +138,7 @@ provision:
       doGrowPart: true
       doUserAndSshSetup: true
       rootfsPartitionNumber: "1"
-      
+    
     "armbian-uefi-arm64-edge-cloud-k8s":
       enabled: false
       arch: "aarch64"
@@ -148,7 +148,7 @@ provision:
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
       rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
-      
+    
     "armbian-uefi-x86-edge-cloud-k8s":
       enabled: false
       arch: "aarch64"
@@ -158,7 +158,7 @@ provision:
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
       rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
-      
+    
     
     "armbian-rpardini-rockpro64-edge-uboot":
       enabled: false
@@ -206,6 +206,16 @@ provision:
       downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.03.31-armsurvivors-68/Armbian-unofficial_24.03.31-armsurvivors-68_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.xz"
       image: "Armbian-unofficial_24.03.31-armsurvivors-68_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.gz"
       conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
+    
+    "rock-5b-edge-trixie-uefi-dtb": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.05-armsurvivors-87/Armbian-unofficial_24.04.05-armsurvivors-87_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.xz"
+      image: "Armbian-unofficial_24.04.05-armsurvivors-87_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.gz"
+      conversion: "xz-to-gz" # @TODO: "qcow2-xz-to-img-gz" one day for completeness
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
       rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
