@@ -163,6 +163,9 @@ smee:
   trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
   publicIP: 192.168.99.2 # Must be set
   imagePullPolicy: Always # I re-push it there sometimes
+  deployment:
+    strategy: 
+      type: Recreate # stop old pod before creating a new one
 
 hegel:
   image: quay.io/tinkerbell/hegel:v0.12.0
