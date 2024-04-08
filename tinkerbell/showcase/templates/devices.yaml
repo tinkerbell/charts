@@ -142,15 +142,15 @@ spec:
 
 
           {{- if $imageObj.doUserAndSshSetup }}
-          - name: "install-openssl-{{ $deviceId }}"
+          - name: "install-packages-{{ $deviceId }}"
             image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
-            timeout: 90
+            timeout: 180 # 3 minutes
             environment:
               BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
               FS_TYPE: ext4
               CHROOT: y
               DEFAULT_INTERPRETER: "/bin/sh -c"
-              CMD_LINE: "apt -y update && apt -y install openssl"
+              CMD_LINE: "apt -y update && DEBIAN_FRONTEND=noninteractive apt -y install openssl neofetch --no-install-recommends --no-install-suggests"
           - name: "create-user-{{ $deviceId }}"
             image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
             timeout: 90
