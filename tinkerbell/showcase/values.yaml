@@ -31,7 +31,7 @@ provision:
       kernel: "vmlinuz-x86_64"
       initrd: "initramfs-x86_64"
       kernelCommandLine: ""
-      bootMode: kexec
+      bootMode: reboot # @TODO: this needs to be set per-device & per-image as well # kexec
 
     "default-hook-aarch64":
       enabled: false
