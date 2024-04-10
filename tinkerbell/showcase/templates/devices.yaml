@@ -130,6 +130,7 @@ spec:
               CMD_LINE: "growpart {{ $rootDiskDevice }} {{$rootDiskRootfsPartitionNumber}} && resize2fs {{$rootDiskRootfsPartitionDevice}}"
           {{- end }}
 
+          {{- if ($imageObj.doFixResolvConf)  }}
           - name: "fix-resolv-{{ $deviceId }}"
             image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
             timeout: 90
@@ -139,6 +140,7 @@ spec:
               CHROOT: y
               DEFAULT_INTERPRETER: "/bin/sh -c"
               CMD_LINE: "echo 'list /etc/resolv.conf: '; ls -la /etc/resolv.conf; echo 'cat /etc/resolv.conf'; cat /etc/resolv.conf; echo 'moving...'; mv -v /etc/resolv.conf /etc/resolv.conf.orig.tink; echo 'nameserver {{ index $mergedDevice.ipv4.dns 0 }} ' > /etc/resolv.conf; echo 'new resolf.conf:' ; cat /etc/resolv.conf"
+          {{- end }}
 
 
           {{- if $imageObj.doUserAndSshSetup }}
@@ -200,6 +202,7 @@ spec:
               DIRMODE: 0755
           {{- end }}
 
+          {{- if ($imageObj.doFixResolvConf )  }}
           - name: "revert-fix-resolv-{{ $deviceId }}"
             image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
             timeout: 90
@@ -209,6 +212,7 @@ spec:
               CHROOT: y
               DEFAULT_INTERPRETER: "/bin/sh -c"
               CMD_LINE: "rm -v /etc/resolv.conf; mv -v /etc/resolv.conf.orig.tink /etc/resolv.conf"
+          {{- end }}
 
           {{- if eq $hookObj.bootMode "kexec" }}
           - name: "kexec-{{ $deviceId }}"

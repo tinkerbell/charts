@@ -127,6 +127,7 @@ provision:
       conversion: "qemu-to-raw-gzip"
       doGrowPart: true
       doUserAndSshSetup: true
+      doFixResolvConf: true
       rootfsPartitionNumber: "1" # @schema type:[integer] # @TODO fix so this mustn't be a string
 
     "ubuntu-jammy-cloud-amd64":
@@ -137,6 +138,7 @@ provision:
       image: "jammy-server-cloudimg-amd64.raw.gz"
       doGrowPart: true
       doUserAndSshSetup: true
+      doFixResolvConf: true
       rootfsPartitionNumber: "1"
     
     "armbian-uefi-arm64-edge-cloud-k8s":
@@ -147,6 +149,7 @@ provision:
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
     
     "armbian-uefi-x86-edge-cloud-k8s":
@@ -157,6 +160,7 @@ provision:
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
     
     
@@ -168,6 +172,7 @@ provision:
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "1"
     
     "armbian-rpardini-orangepi3b-edge-uboot":
@@ -178,6 +183,7 @@ provision:
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "1"
     
     "armbian-rpardini-rpi4b-current-not-efi":
@@ -188,6 +194,7 @@ provision:
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "2" # rpi image has a fat32 boot partition (config.txt and such), and partition 2 is the real ext4 rootfs
     
     "armbian-rpardini-r58x-vendor-uboot": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
@@ -198,6 +205,7 @@ provision:
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "1" # first partition, ext4 rootfs 
     
     "armbian-rpardini-r58x-vendor-uefi-cloud": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
@@ -208,6 +216,7 @@ provision:
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
     
     "rock-5b-edge-trixie-uefi-dtb": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
@@ -218,6 +227,7 @@ provision:
       conversion: "xz-to-gz" # @TODO: "qcow2-xz-to-img-gz" one day for completeness
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
       rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
     
     "armbian-bookworm-meson64-current-cloud":
