@@ -83,7 +83,35 @@ data:
     else
       echo "Image file $file already exists. Skipping download."
     fi
+    {{- end }}
 
+    {{- if eq "download-only" $image.conversion }}
+    # Download only. Image is already in format necessary.
+    image_url="{{ $image.downloadURL }}"
+    file="/output/{{ $image.image }}"
+    if [[ ! -f "$file" ]]; then
+      echo "Download-only Image file $file does not exist. Downloading...."
+      wget "$image_url" -O "${file}.tmp"
+      echo "Done downloading image. Moving..."
+      mv -v "${file}.tmp" "$file"  
+      echo "Done moving image."
+      rm -f "${file}.tmp.xz"
+    else
+      echo "Download-only image file $file already exists. Skipping download."
+    fi
+    {{- end }}
+
+    {{- if eq "local" $image.conversion }}
+    # Not even download anything. Image should be in there already somehow.
+    image_url="{{ $image.downloadURL }}"
+    file="/output/{{ $image.image }}"
+    if [[ ! -f "$file" ]]; then
+      echo "Image file $file does not exist. Please deploy image file manually, or use a different conversion than none. Sleeping 10s and exiting with error 66."
+      sleep 10
+      exit 66
+    else
+      echo "No-conversion image file $file already exists. Ready to use."
+    fi
     {{- end }}
     
 ---
