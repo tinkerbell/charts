@@ -144,9 +144,20 @@ provision:
     "fatso-ubuntu-noble-baremetal-amd64":
       enabled: false
       arch: "x86_64"
-      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal/ubuntu-noble-baremetal-v1000.img.gz"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal/ubuntu-noble-baremetal-v1001.img.gz"
       conversion: "download-only"
-      image: "ubuntu-noble-baremetal-v1000.img.gz"
+      image: "ubuntu-noble-baremetal-v1001.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      rootfsPartitionNumber: "2" # First one is ESP
+    
+    "fatso-rocky8-baremetal-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/rocky-8-baremetal/rocky-8-baremetal-v1001.img.gz"
+      conversion: "download-only"
+      image: "rocky-8-baremetal-v1001.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
@@ -155,9 +166,20 @@ provision:
     "fatso-ubuntu-noble-local-amd64":
       enabled: false
       arch: "x86_64"
-      downloadURL: "not-used-but-must-change-if-image-changes"
+      downloadURL: "not-used-but-must-change-if-image-changes::ubuntu-noble-baremetal-v1000-local.img.gz"
       conversion: "local" # should be there already somehow
       image: "ubuntu-noble-baremetal-v1000-local.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      rootfsPartitionNumber: "2" # First one is ESP
+    
+    "fatso-rocky8-local-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "not-used-but-must-change-if-image-changes::rocky-8-baremetal-v666-local.img.gz"
+      conversion: "local" # should be there already somehow
+      image: "rocky-8-baremetal-v666-local.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
