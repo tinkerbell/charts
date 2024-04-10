@@ -223,7 +223,7 @@ spec:
               BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
               FS_TYPE: ext4
               IMAGE: {{ $.Values.actions.repository }}/kexec:{{ $.Values.actions.version }}
-              WAIT_SECONDS: 1
+              WAIT_SECONDS: 0
             volumes:
               - /var/run/docker.sock:/var/run/docker.sock
           {{- end }}
@@ -236,7 +236,7 @@ spec:
             command: ["reboot"]
             environment:
               IMAGE: alpine
-              WAIT_SECONDS: 1
+              WAIT_SECONDS: 0
             volumes:
               - /var/run/docker.sock:/var/run/docker.sock
           {{- end }}
