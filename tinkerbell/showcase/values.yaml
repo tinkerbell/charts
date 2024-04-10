@@ -178,8 +178,8 @@ provision:
     "armbian-rpardini-orangepi3b-edge-uboot":
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.03.30-armsurvivors-64/Armbian-unofficial_24.03.30-armsurvivors-64_Orangepi3b_bookworm_edge_6.8.2.img.xz"
-      image: "Armbian-unofficial_24.03.30-armsurvivors-64_Orangepi3b_bookworm_edge_6.8.2.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.06-armsurvivors-90/Armbian-unofficial_24.04.06-armsurvivors-90_Orangepi3b_bookworm_edge_6.8.4.img.xz"
+      image: "Armbian-unofficial_24.04.06-armsurvivors-90_Orangepi3b_bookworm_edge_6.8.4.img.gz"
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
