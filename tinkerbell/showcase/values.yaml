@@ -17,8 +17,8 @@ provision:
   common:
     # Used together with downloadFile field in each hook;
     # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
-    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240404-2216/"
-    hookDownloadId: "20240404-2216" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240413-0904/"
+    hookDownloadId: "20240413-0904" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
   
   # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
   # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
@@ -32,6 +32,45 @@ provision:
       initrd: "initramfs-x86_64"
       kernelCommandLine: ""
       bootMode: reboot # @TODO: this needs to be set per-device & per-image as well # kexec
+
+    "peg-default-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadFile: "hook-peg-default-amd64.tar.gz"
+      kernel: "vmlinuz-peg-default-amd64"
+      initrd: "initramfs-peg-default-amd64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
+    "pegk-default-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadFile: "hook-pegk-default-amd64.tar.gz"
+      kernel: "vmlinuz-pegk-default-amd64"
+      initrd: "initramfs-pegk-default-amd64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
+    "dev-pegk-default-amd64":
+      enabled: false
+      skipDownload: true # Don't download it, it's already there; just enable it
+      arch: "x86_64"
+      downloadFile: "hook-pegk-default-amd64.tar.gz"
+      kernel: "vmlinuz-pegk-default-amd64"
+      initrd: "initramfs-pegk-default-amd64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
+    "dev-default-hook-amd64":
+      enabled: false
+      skipDownload: true # Don't download it, it's already there; just enable it
+      arch: "x86_64"
+      downloadFile: "hook-x86_64.tar.gz"
+      kernel: "vmlinuz-x86_64"
+      initrd: "initramfs-x86_64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
 
     "default-hook-aarch64":
       enabled: false
