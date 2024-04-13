@@ -86,6 +86,7 @@ spec:
             echo Kernel cmdline: ${kernel-params}
             kernel ${download-url}/{{ $hookObj.kernel }} ${kernel-params}
             initrd ${download-url}/{{ $hookObj.initrd }}
+            imgstat
             boot
 ---
 apiVersion: "tinkerbell.org/v1alpha1"
