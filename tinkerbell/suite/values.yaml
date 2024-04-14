@@ -56,27 +56,83 @@ showcase:
       ### Examples for virtual machines, ran outside of Hook's build system.
       ### Most virtualization software has support for PXE booting.
       ### You will need to have (bridging/etc) setup to get a proper IP address from a real Smee, etc.
-      "vm03":
+      "vm03": # For Armbian kernel Hook, and Ubuntu cloud image
         enabled: false
         arch: aarch64
         mac: "52:54:00:01:03:03"
         rootDisk: "/dev/vdb"
         ipv4:
           address: "192.168.99.41"
-        hookRef: "armbian-uefi-arm64-edge" # "default-hook-aarch64" # defined above
-        imageRef: "ubuntu-jammy-cloud-arm64" # defined above
-        extraKernelCommandLine: "console=ttyAMA0"
       
-      "vm09":
+      "vm04": # For default arm64 kernel Hook, and Ubuntu cloud image
         enabled: false
-        arch: x86_64
-        mac: "52:54:00:01:03:09"
+        arch: aarch64
+        mac: "52:54:00:01:03:04"
         rootDisk: "/dev/vdb"
         ipv4:
-          address: "192.168.99.42"
-        hookRef: "armbian-uefi-x86-edge" # "default-hook-amd64" # defined above
-        imageRef: "ubuntu-jammy-cloud-amd64" # defined above
+          address: "192.168.99.41"
+
+      "vm08":
+        enabled: true
+        arch: x86_64
+        mac: "52:54:00:01:03:08"
+        rootDisk: "/dev/disk/by-id/virtio-root_disk_serial"
+        ipv4:
+          address: "192.168.99.59"
         extraKernelCommandLine: "console=ttyS0"
+        imageRef: "fatso-ubuntu-noble-local-amd64"
+        #imageRef: "fatso-ubuntu-noble-baremetal-amd64"
+        hookRef: "default-hook-amd64"
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+        #hookOverride:
+        #  bootMode: kexec
+
+      "vm09":
+        enabled: true
+        arch: x86_64
+        mac: "52:54:00:01:03:09"
+        rootDisk: "/dev/disk/by-id/virtio-root_disk_serial"
+        ipv4:
+          address: "192.168.99.61"
+        extraKernelCommandLine: "console=ttyS0"
+        imageRef: "fatso-ubuntu-noble-baremetal-amd64" # "fatso-ubuntu-noble-local-amd64"
+        hookRef: "default-hook-amd64"
+        #hookOverride:
+        #  bootMode: kexec
+      
+      
+      "thundercat":
+        enabled: true
+        arch: x86_64
+        #mac: "3c:18:a0:15:9a:9f" # thinkpad 100mbit/s?
+        #mac: "8c:ae:4c:dd:10:78" # 2.5gbit plugable
+        mac: "3c:18:a0:95:69:f7" # amazonbasics white usb3
+        rootDisk: "/dev/sda"
+        ipv4:
+          address: "192.168.99.70"
+        #extraKernelCommandLine: "console=ttyUSB0,115200" 
+        #extraKernelCommandLine: "console=tty0 "
+        extraKernelCommandLine: "console=tty0 " # console=ttyUSB0,115200 # n8 breaks getty?
+        #hookOverride:
+        #  bootMode: kexec
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+
+        #hookRef: "latest-lts-amd64"
+        hookRef: "default-hook-amd64"
+        #hookRef: "armbian-uefi-x86-edge" # "default-hook-amd64" # defined above
+        #hookRef: "peg-default-amd64" # "default-hook-amd64" # defined above
+        #hookRef: "pegk-default-amd64" # "default-hook-amd64" # defined above
+        #hookRef: "dev-pegk-default-amd64" # "default-hook-amd64" # defined above
+        #hookRef: "dev-default-hook-amd64" # "default-hook-amd64" # defined above
+
+        #imageRef: "fatso-el9-local-amd64"
+        imageRef: "fatso-ubuntu-noble-local-amd64"
+        #imageRef: "fatso-rocky8-baremetal-amd64"
+        #imageRef: "fatso-rocky8-local-amd64"
+        #imageRef: "fatso-ubuntu-noble-baremetal-amd64"
+        #imageRef: "fatso-ubuntu-noble-local-amd64"
       
       
       ###
@@ -86,61 +142,41 @@ showcase:
       # Khadas VIM3L and other meson64-based boards (u-boot)
       "vim3l":
         enabled: false
-        arch: aarch64
         mac: "c8:63:14:71:2a:6d"
         rootDisk: "/dev/mmcblk0"
         ipv4:
           address: "192.168.99.51"
-        hookRef: "armbian-meson64-edge"
-        imageRef: "ubuntu-jammy-cloud-arm64"
-        extraKernelCommandLine: "console=ttyAML0,115200"
       
       # RockPro64 and other rockchip64-based boards (u-boot)
       "rockpro64":
         enabled: false
-        arch: aarch64
         mac: "2a:36:cb:a2:ae:b8"
         #rootDisk: "/dev/mmcblk2"  # mmcblk2 is the eMMC, mmcblk1 is the SD card
         rootDisk: "/dev/disk/by-id/mmc-AJTD4R_0x0b05e84d" # much safer to use this style
         ipv4:
           address: "192.168.99.52"
-        hookRef: "armbian-rockchip64-edge" # defined above
-        imageRef: "armbian-rpardini-rockpro64-edge-uboot" # defined above
-        extraKernelCommandLine: "console=ttyS2,1500000"
       
       "orangepi3b":
         enabled: false
-        arch: aarch64
         mac: "b6:a7:96:d5:f1:84"
-        rootDisk: "/dev/disk/by-id/mmc-A3A551_0x2f8c5bd0" # /dev/mmcblk0 is the eMMC
+        rootDisk: "/dev/disk/by-id/wwn-0x3001237923792379" # /dev/mmcblk0 is the eMMC
         ipv4:
           address: "192.168.99.53"
-        hookRef: "armbian-rockchip64-edge"
-        imageRef: "armbian-rpardini-orangepi3b-edge-uboot" # defined above
-        extraKernelCommandLine: "console=ttyS2,1500000"
       
       # Raspberry Pi 4B (bcm2711), using edk2 UEFI firmware on an SD card, and an external NVMe-USB disk
       "rpi4b":
         enabled: false
-        arch: aarch64
         mac: "dc:a6:32:ec:8b:49"
         rootDisk: "/dev/disk/by-id/wwn-0x3001237923792379"
         ipv4:
           address: "192.168.99.54"
-        hookRef: "armbian-bcm2711-current" # works, as long as UEFI is set with ACPI+DTB and no 3gb limit. Use edk2 from https://github.com/pftf/RPi4
-        imageRef: "armbian-rpardini-rpi4b-current-not-efi" # defined above
-        extraKernelCommandLine: "console=tty1 console=ttyAMA0,115200 loglevel=7" # Last console defined "wins", thus use tty1 last if no serial console
       
       "mekotronics-r58x-pro-via-usb":
         enabled: false
-        arch: aarch64
         mac: "3c:18:a0:15:9a:9f" # 3C18A0159A9F
         ipv4:
           address: "192.168.99.55"
-        hookRef: "armbian-rk35xx-legacy" # "armbian-rk35xx-vendor"
-        imageRef: "armbian-rpardini-r58x-vendor-uboot"
-        extraKernelCommandLine: "console=ttyFIQ0:1500000 " # console=tty1  # Last console defined "wins", thus use tty1 last if no serial console
-        rootDisk: "/dev/nvme0NOENOENOENEyet"
+        rootDisk: "/dev/disk/by-id/nvme-WD_Blue_SN570_1TB_231421807346" # Gooo!
   
   
   tinkerbell:
@@ -159,13 +195,13 @@ smee:
   hostNetwork: true # no proxies, loadbalancers, or anything: it just runs as if directly on the k8s host.
   logLevel: "debug"
   tinkWorkerImage: quay.io/tinkerbell/tink-worker:v0.10.0
-  image: quay.io/tinkerbellrpardini/smee:latest-rpardini # custom build with updated ipxedust and arm64 NAPNULL for u-boot's PXE-via-EFI
+  image: quay.io/tinkerbellrpardini/smee:latest-rpardini4 # custom build with updated ipxedust and arm64 NAPNULL for u-boot's PXE-via-EFI
   # @TODO bug in smee chart, the values is under http: but the usage is not
   trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
   publicIP: 192.168.99.2 # Must be set
   imagePullPolicy: Always # I re-push it there sometimes
   deployment:
-    strategy: 
+    strategy:
       type: Recreate # stop old pod before creating a new one
 
 hegel:
