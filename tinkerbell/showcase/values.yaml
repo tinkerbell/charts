@@ -17,8 +17,8 @@ provision:
   common:
     # Used together with downloadFile field in each hook;
     # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
-    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240413-0904/"
-    hookDownloadId: "20240413-0904" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240414-1316/"
+    hookDownloadId: "20240414-1316" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
   
   # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
   # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
@@ -205,9 +205,9 @@ provision:
     "fatso-ubuntu-noble-local-amd64":
       enabled: false
       arch: "x86_64"
-      downloadURL: "not-used-but-must-change-if-image-changes::ubuntu-noble-baremetal-v1000-local.img.gz"
+      downloadURL: "not-used-but-must-change-if-image-changes::ubuntu-noble-baremetal-v666-local.img.gz"
       conversion: "local" # should be there already somehow
-      image: "ubuntu-noble-baremetal-v1000-local.img.gz"
+      image: "ubuntu-noble-baremetal-v666-local.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
