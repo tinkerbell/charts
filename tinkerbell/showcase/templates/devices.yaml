@@ -1,19 +1,29 @@
 {{- range $deviceId, $dev := .Values.hardware.devices }}
 
 {{- if not $dev.enabled }}
-# Device not enabled: {{$deviceId}}
+  # Device not enabled: {{$deviceId}}
 {{- else }}
-# Device enabled: {{$deviceId}}
+  # Device enabled: {{$deviceId}}
 {{- $common := $.Values.hardware.common -}}
 {{- $mergedDevice := merge $dev $common }}
-# Getting hook from hookRef: '{{$mergedDevice.hookRef}}'
+  # Getting hook from hookRef: '{{$mergedDevice.hookRef}}'
 {{- if not $mergedDevice.hookRef }}{{- fail (printf "Device '%s', hookRef '%s': %s" $deviceId $mergedDevice.hookRef "hookRef unset?") }}{{- end }}
+
 {{- $hookObj := index $.Values.provision.hook $mergedDevice.hookRef }}
 {{- if not $hookObj }}{{- fail (printf "Device '%s', hookRef '%s': %s" $deviceId $mergedDevice.hookRef "hookRef not found") }}{{- end }}
+  # if the device has a hookOverride property, merge it on top of the hookObj; pre-merge: {{$hookObj.bootMode}}
+{{ if $mergedDevice.hookOverride }}
+  # YES!!!!!!!!!! has hookOverride {{$deviceId}}
+{{ $hookObj = merge $mergedDevice.hookOverride $hookObj }}
+{{ else }}
+  # NO!!!!!!!!!! no hookOverride {{$deviceId}}
+{{ end }}
+  # Reboot mode after merge: {{$hookObj.bootMode}}
+
 {{- $imageObj := index $.Values.provision.images $mergedDevice.imageRef }}
 {{- if not $imageObj }}{{- (printf "Device '%s', imageRef '%s': %s" $deviceId $mergedDevice.imageRef "imageRef not found") }}{{- end }}
-# Check sanity of arch across device / image / hook - they all must match
-# Device arch: {{$dev.arch}} Image arch: {{$imageObj.arch}} Hook arch: {{$hookObj.arch}}
+  # Check sanity of arch across device / image / hook - they all must match
+  # Device arch: {{$dev.arch}} Image arch: {{$imageObj.arch}} Hook arch: {{$hookObj.arch}}
 {{- if ne $imageObj.arch $hookObj.arch }}{{- fail (printf "Device '%s': '%s'" $deviceId "image and hook arch mismatch") }}{{- end }}
 {{- if ne $dev.arch $imageObj.arch }}{{- fail (printf "Device '%s': '%s'" $deviceId "device and image arch mismatch") }}{{- end }}
 {{- if ne $dev.arch $hookObj.arch }}{{- fail (printf "Device '%s': '%s'" $deviceId "device and hook arch mismatch") }}{{- end }}
