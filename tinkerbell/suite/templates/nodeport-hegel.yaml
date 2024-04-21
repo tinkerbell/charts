@@ -1,0 +1,20 @@
+{{- if .Values.nodePort.hegel.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hegel
+  name: hegel-nodeport
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  type: NodePort
+  ports:
+    - name: hegel-http
+      nodePort: {{ .Values.nodePort.hegel.port }}
+      protocol: TCP
+      port: 50061
+      targetPort: hegel-http
+  selector:
+    app: hegel
+{{- end }}

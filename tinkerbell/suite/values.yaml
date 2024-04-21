@@ -22,7 +22,7 @@ nodePort:
   hookImageServer:
     enabled: true
     port: 32083
-  hegel: # @TODO this nodeport template
+  hegel:
     enabled: true
     port: 32061
   tinkGRPC:
@@ -170,9 +170,6 @@ smee:
 hegel:
   image: quay.io/tinkerbell/hegel:v0.12.0
   trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
-  nodePort:
-    enabled: true
-    port: 50061
 
 rufio:
   image: quay.io/tinkerbell/rufio:v0.3.3
