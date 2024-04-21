@@ -185,55 +185,21 @@ provision:
     "fatso-ubuntu-noble-baremetal-amd64":
       enabled: false
       arch: "x86_64"
-      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal/ubuntu-noble-baremetal-v1002.img.gz"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal-cloud-k8s-nvidia/ubuntu-noble-baremetal-cloud-k8s-nvidia-v1003.img.gz"
       conversion: "download-only"
-      image: "ubuntu-noble-baremetal-v1002.img.gz"
+      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v1003.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
       doInjectHegelCloudInit: true
       rootfsPartitionNumber: "2" # First one is ESP
     
-    "fatso-rocky8-baremetal-amd64":
+    "fatso-el9-baremetal-amd64":
       enabled: false
       arch: "x86_64"
-      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/rocky-8-baremetal/rocky-8-baremetal-v1002.img.gz"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/el-9-baremetal/el-9-baremetal-v1003.img.gz"
       conversion: "download-only"
-      image: "rocky-8-baremetal-v1002.img.gz"
-      doGrowPart: false
-      doUserAndSshSetup: false
-      doFixResolvConf: false
-      rootfsPartitionNumber: "2" # First one is ESP
-    
-    "fatso-ubuntu-noble-local-amd64":
-      enabled: false
-      arch: "x86_64"
-      downloadURL: "not-used-but-must-change-if-image-changes::ubuntu-noble-baremetal-v666-local.img.gz"
-      conversion: "local" # should be there already somehow
-      image: "ubuntu-noble-baremetal-v666-local.img.gz"
-      doGrowPart: false
-      doUserAndSshSetup: false
-      doFixResolvConf: false
-      doInjectHegelCloudInit: true
-      rootfsPartitionNumber: "2" # First one is ESP
-    
-    "fatso-rocky8-local-amd64":
-      enabled: false
-      arch: "x86_64"
-      downloadURL: "not-used-but-must-change-if-image-changes::rocky-8-baremetal-v666-local.img.gz"
-      conversion: "local" # should be there already somehow
-      image: "rocky-8-baremetal-v666-local.img.gz"
-      doGrowPart: false
-      doUserAndSshSetup: false
-      doFixResolvConf: false
-      rootfsPartitionNumber: "2" # First one is ESP
-    
-    "fatso-el9-local-amd64":
-      enabled: false
-      arch: "x86_64"
-      downloadURL: "not-used-but-must-change-if-image-changes::el-9-baremetal-v666-local.img.gz"
-      conversion: "local" # should be there already somehow
-      image: "el-9-baremetal-v666-local.img.gz"
+      image: "el-9-baremetal-v1003.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
@@ -328,12 +294,30 @@ provision:
       doFixResolvConf: true
       rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
     
-    "armbian-bookworm-meson64-current-cloud":
+    # local development versions of fatso images; identical 
+    "fatso-ubuntu-noble-local-amd64":
       enabled: false
-      arch: "aarch64"
-      downloadURL: "https://..../"
-      image: "armbian-bookworm-meson64.img"
-      rootfsPartitionNumber: "1"
+      arch: "x86_64"
+      downloadURL: "not-used-but-must-change-if-image-changes::ubuntu-noble-baremetal-cloud-k8s-nvidia-v666-local.img.gz"
+      conversion: "local" # should be there already somehow
+      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v666-local.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "2" # First one is ESP
+    
+    "fatso-el9-local-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "not-used-but-must-change-if-image-changes::el-9-baremetal-v666-local.img.gz"
+      conversion: "local" # should be there already somehow
+      image: "el-9-baremetal-v666-local.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      rootfsPartitionNumber: "2" # First one is ESP
+
 
 # Generates CRs triplets with Hardware, Workflow, and Template, using by-id references to the hook and images above.
 
