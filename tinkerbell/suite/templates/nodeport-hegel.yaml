@@ -9,6 +9,7 @@ metadata:
   namespace: {{ .Release.Namespace | quote }}
 spec:
   type: NodePort
+  externalTrafficPolicy: Local
   ports:
     - name: hegel-http
       nodePort: {{ .Values.nodePort.hegel.port }}
