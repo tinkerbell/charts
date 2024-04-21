@@ -152,7 +152,8 @@ showcase:
     syslogHost: "192.168.99.2"
     # tink's grpc nodeport
     grpcAuthority: "192.168.99.2:32013"
-    # @TODO one day use hegel to serve user-data and meta-data to _deployed cloud-init images_
+    # Hegel nodeport
+    hegelURL: "http://192.168.99.2:32061"
 
 smee:
   hostNetwork: true # no proxies, loadbalancers, or anything: it just runs as if directly on the k8s host.
