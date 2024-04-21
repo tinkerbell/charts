@@ -17,8 +17,8 @@ provision:
   common:
     # Used together with downloadFile field in each hook;
     # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
-    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240414-1316/"
-    hookDownloadId: "20240414-1316" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240419-1740/"
+    hookDownloadId: "20240419-1740" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
   
   # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
   # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
@@ -33,31 +33,21 @@ provision:
       kernelCommandLine: ""
       bootMode: reboot # @TODO: this needs to be set per-device & per-image as well # kexec
 
+    "latest-lts-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadFile: "hook-latest-lts-x86_64.tar.gz"
+      kernel: "vmlinuz-latest-lts-x86_64"
+      initrd: "initramfs-latest-lts-x86_64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
     "peg-default-amd64":
       enabled: false
       arch: "x86_64"
       downloadFile: "hook-peg-default-amd64.tar.gz"
       kernel: "vmlinuz-peg-default-amd64"
       initrd: "initramfs-peg-default-amd64"
-      kernelCommandLine: ""
-      bootMode: reboot
-
-    "pegk-default-amd64":
-      enabled: false
-      arch: "x86_64"
-      downloadFile: "hook-pegk-default-amd64.tar.gz"
-      kernel: "vmlinuz-pegk-default-amd64"
-      initrd: "initramfs-pegk-default-amd64"
-      kernelCommandLine: ""
-      bootMode: reboot
-
-    "dev-pegk-default-amd64":
-      enabled: false
-      skipDownload: true # Don't download it, it's already there; just enable it
-      arch: "x86_64"
-      downloadFile: "hook-pegk-default-amd64.tar.gz"
-      kernel: "vmlinuz-pegk-default-amd64"
-      initrd: "initramfs-pegk-default-amd64"
       kernelCommandLine: ""
       bootMode: reboot
 
@@ -78,6 +68,15 @@ provision:
       downloadFile: "hook-aarch64.tar.gz"
       kernel: "vmlinuz-aarch64"
       initrd: "initramfs-aarch64"
+      kernelCommandLine: ""
+      bootMode: reboot # kexec is no-go here, kernel problem? (persists after enabling CONFIG_KEXEC & trying to fix TB action)
+
+    "latest-lts-aarch64":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook-latest-lts-aarch64.tar.gz"
+      kernel: "vmlinuz-latest-lts-aarch64"
+      initrd: "initramfs-latest-lts-aarch64"
       kernelCommandLine: ""
       bootMode: reboot # kexec is no-go here, kernel problem? (persists after enabling CONFIG_KEXEC & trying to fix TB action)
 
@@ -219,6 +218,17 @@ provision:
       downloadURL: "not-used-but-must-change-if-image-changes::rocky-8-baremetal-v666-local.img.gz"
       conversion: "local" # should be there already somehow
       image: "rocky-8-baremetal-v666-local.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      rootfsPartitionNumber: "2" # First one is ESP
+    
+    "fatso-el9-local-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "not-used-but-must-change-if-image-changes::el-9-baremetal-v666-local.img.gz"
+      conversion: "local" # should be there already somehow
+      image: "el-9-baremetal-v666-local.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
