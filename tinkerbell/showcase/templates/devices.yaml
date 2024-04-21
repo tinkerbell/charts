@@ -58,16 +58,23 @@ metadata:
 spec:
   disks:
     - device: "{{ $rootDiskDevice }}"
+  userData: |
+    {{- $mergedDevice.userData | default "echo 'tinkerbell-showcase: userData not configured for device';" | nindent 4 }}
   metadata:
     facility:
-      facility_code: sandbox
+      facility_code: tinkerbell-showcase
+      plan_slug: "{{$deviceId}}"
     instance:
       hostname: "{{ $deviceId }}"
       id: "{{ $dev.mac }}"
+      tags:
+        - "tinkerbell-showcase"
       operating_system:
         distro: "ubuntu" # @TODO
-        os_slug: "ubuntu_20_04"
-        version: "20.04"
+        image_tag: "latest"
+        slug: "ubuntuslug"
+        os_slug: "ubuntu_24_04"
+        version: "24.04"
   interfaces:
     - dhcp:
         arch: "{{ $dev.arch }}"
@@ -211,6 +218,43 @@ spec:
               GID: 0
               MODE: 0644
               DIRMODE: 0755
+          {{- end }}
+
+          {{- if ($imageObj.doInjectHegelCloudInit )  }}
+          # Based on https://tinkerbell.org/docs/integrations/cloudinit/#setup-cloud-init-to-use-hegel
+          - name: "inject-cloud-init-hegel-cfg-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/writefile:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              DEST_PATH: /etc/cloud/cloud.cfg.d/10_tinkerbell.cfg
+              CONTENTS: |
+                datasource:
+                  Ec2:
+                    metadata_urls: ["{{ $.Values.tinkerbell.hegelURL }}"]
+                    strict_id: false
+                manage_etc_hosts: localhost
+                warnings:
+                  dsid_missing_source: off      
+              DEST_DISK: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              UID: 0
+              GID: 0
+              MODE: 0600
+              DIRMODE: 0700
+
+          - name: "inject-cloud-init-hegel-ds-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/writefile:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              DEST_PATH: /etc/cloud/ds-identify.cfg
+              CONTENTS: |
+                datasource: Ec2
+              DEST_DISK: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              UID: 0
+              GID: 0
+              MODE: 0600
+              DIRMODE: 0700
           {{- end }}
 
           {{- if ($imageObj.doFixResolvConf )  }}

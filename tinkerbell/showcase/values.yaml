@@ -3,6 +3,7 @@ tinkerbell:
   hostDirectory: "/opt/hook" # hostPath where Hook & images are downloaded & served from
   hookURL: "http://192.168.66.71:8080" # # URL where Hook is served from
   imagesURL: "http://192.168.66.71:8080" # # URL where images are served from
+  hegelURL: "http://192.168.66.71:32061" # Hegel URL
   syslogHost: "192.168.66.71" # Syslog host, usually smee
   grpcAuthority: "192.168.66.71:42113" # Tink's gRPC authority
 
@@ -166,6 +167,7 @@ provision:
       doGrowPart: true
       doUserAndSshSetup: true
       doFixResolvConf: true
+      doInjectHegelCloudInit: true
       rootfsPartitionNumber: "1" # @schema type:[integer] # @TODO fix so this mustn't be a string
 
     "ubuntu-jammy-cloud-amd64":
@@ -177,6 +179,7 @@ provision:
       doGrowPart: true
       doUserAndSshSetup: true
       doFixResolvConf: true
+      doInjectHegelCloudInit: true
       rootfsPartitionNumber: "1"
     
     "fatso-ubuntu-noble-baremetal-amd64":
@@ -188,6 +191,7 @@ provision:
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
+      doInjectHegelCloudInit: true
       rootfsPartitionNumber: "2" # First one is ESP
     
     "fatso-rocky8-baremetal-amd64":
@@ -210,6 +214,7 @@ provision:
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
+      doInjectHegelCloudInit: true
       rootfsPartitionNumber: "2" # First one is ESP
     
     "fatso-rocky8-local-amd64":
@@ -407,6 +412,10 @@ hardware:
       hookRef: "default-hook-amd64"
       imageRef: "fatso-ubuntu-noble-baremetal-amd64"
       extraKernelCommandLine: "console=ttyS0"
+      # userData is just standard cloud-init, thus supports #cloud-config and #include etc.
+      # Attention: if ever ran, this gives rpardini root access to your machine. Use your own scripts;
+      userData: |
+        #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
 
     "vm09":
       enabled: false
