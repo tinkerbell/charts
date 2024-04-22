@@ -90,6 +90,10 @@ spec:
           - {{ . | quote }}
           {{- end }}
         uefi: {{ $dev.uefi }}
+        time_servers:
+          {{- range $mergedDevice.ipv4.time_servers }}
+          - {{ . | quote }}
+          {{- end }}
       netboot:
         allowPXE: true
         allowWorkflow: true

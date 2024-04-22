@@ -328,6 +328,7 @@ hardware:
       gateway: "192.168.99.1" # Must be set, otherwise no internet access; can be overriden per-device
       netmask: "255.255.255.0"
       dns: [ "192.168.66.1" ]
+      time_servers: [ "192.168.66.1" ]
 
   devices: # One entry for each machine
     
