@@ -185,9 +185,9 @@ provision:
     "fatso-ubuntu-noble-baremetal-amd64":
       enabled: false
       arch: "x86_64"
-      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal-cloud-k8s-nvidia/ubuntu-noble-baremetal-cloud-k8s-nvidia-v1003.img.gz"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal-cloud-k8s-nvidia/ubuntu-noble-baremetal-cloud-k8s-nvidia-v1004.img.gz"
       conversion: "download-only"
-      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v1003.img.gz"
+      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v1004.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
