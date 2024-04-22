@@ -39,6 +39,7 @@ showcase:
         gateway: "192.168.99.1" # Must be set, otherwise no internet access; can be overriden per-device
         netmask: "255.255.255.0"
         dns: [ "192.168.66.1" ]
+        time_servers: [ "192.168.66.1" ]
 
     devices:
       ####  Examples for use in Hook development environment.
@@ -195,7 +196,7 @@ smee:
   hostNetwork: true # no proxies, loadbalancers, or anything: it just runs as if directly on the k8s host.
   logLevel: "debug"
   tinkWorkerImage: quay.io/tinkerbell/tink-worker:v0.10.0
-  image: quay.io/tinkerbellrpardini/smee:latest-rpardini4 # custom build with updated ipxedust and arm64 NAPNULL for u-boot's PXE-via-EFI
+  image: quay.io/tinkerbellrpardini/smee:latest-rpardini5 # custom build with updated ipxedust and arm64 NAPNULL for u-boot's PXE-via-EFI
   # @TODO bug in smee chart, the values is under http: but the usage is not
   trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
   publicIP: 192.168.99.2 # Must be set
