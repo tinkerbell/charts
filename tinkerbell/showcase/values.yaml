@@ -432,6 +432,17 @@ hardware:
       imageRef: "ubuntu-jammy-cloud-arm64"
       extraKernelCommandLine: "console=ttyAML0,115200"
     
+    "t95z":
+      enabled: false
+      arch: aarch64
+      mac: "c8:63:14:71:2a:6d"
+      rootDisk: "/dev/NOT_YET"
+      ipv4:
+        address: "192.168.99.27"
+      hookRef: "armbian-meson64-edge"
+      imageRef: "ubuntu-jammy-cloud-arm64" # @TODO wrong
+      extraKernelCommandLine: "console=ttyAML0,115200"
+    
     # RockPro64 and other rockchip64-based boards (u-boot)
     "rockpro64":
       enabled: false
