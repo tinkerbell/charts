@@ -185,9 +185,9 @@ provision:
     "fatso-ubuntu-noble-baremetal-amd64":
       enabled: false
       arch: "x86_64"
-      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal-cloud-k8s-nvidia/ubuntu-noble-baremetal-cloud-k8s-nvidia-v1004.img.gz"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal-cloud-k8s-nvidia/ubuntu-noble-baremetal-cloud-k8s-nvidia-v1005.img.gz"
       conversion: "download-only"
-      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v1004.img.gz"
+      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v1005.img.gz"
       doGrowPart: false
       doUserAndSshSetup: false
       doFixResolvConf: false
@@ -242,8 +242,8 @@ provision:
     "armbian-rpardini-orangepi3b-edge-uboot":
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.06-armsurvivors-90/Armbian-unofficial_24.04.06-armsurvivors-90_Orangepi3b_bookworm_edge_6.8.4.img.xz"
-      image: "Armbian-unofficial_24.04.06-armsurvivors-90_Orangepi3b_bookworm_edge_6.8.4.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.12-armsurvivors-166/Armbian-unofficial_24.05.12-armsurvivors-166_Orangepi3b_bookworm_edge_6.8.9.img.xz"
+      image: "Armbian-unofficial_24.05.12-armsurvivors-166_Orangepi3b_bookworm_edge_6.8.9.img.gz"
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
