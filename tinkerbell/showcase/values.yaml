@@ -18,8 +18,8 @@ provision:
   common:
     # Used together with downloadFile field in each hook;
     # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
-    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240519-1405/"
-    hookDownloadId: "20240519-1405" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240519-1935/"
+    hookDownloadId: "20240519-1935" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
   
   # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
   # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
