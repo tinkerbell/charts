@@ -18,8 +18,8 @@ provision:
   common:
     # Used together with downloadFile field in each hook;
     # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
-    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240419-1740/"
-    hookDownloadId: "20240419-1740" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240519-1405/"
+    hookDownloadId: "20240519-1405" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
   
   # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
   # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
@@ -28,7 +28,7 @@ provision:
     "default-hook-amd64":
       enabled: false
       arch: "x86_64"
-      downloadFile: "hook-x86_64.tar.gz"
+      downloadFile: "hook_x86_64.tar.gz"
       kernel: "vmlinuz-x86_64"
       initrd: "initramfs-x86_64"
       kernelCommandLine: ""
@@ -37,7 +37,7 @@ provision:
     "latest-lts-amd64":
       enabled: false
       arch: "x86_64"
-      downloadFile: "hook-latest-lts-x86_64.tar.gz"
+      downloadFile: "hook_latest-lts-x86_64.tar.gz"
       kernel: "vmlinuz-latest-lts-x86_64"
       initrd: "initramfs-latest-lts-x86_64"
       kernelCommandLine: ""
@@ -46,7 +46,7 @@ provision:
     "peg-default-amd64":
       enabled: false
       arch: "x86_64"
-      downloadFile: "hook-peg-default-amd64.tar.gz"
+      downloadFile: "hook_peg-default-amd64.tar.gz"
       kernel: "vmlinuz-peg-default-amd64"
       initrd: "initramfs-peg-default-amd64"
       kernelCommandLine: ""
@@ -56,7 +56,7 @@ provision:
       enabled: false
       skipDownload: true # Don't download it, it's already there; just enable it
       arch: "x86_64"
-      downloadFile: "hook-x86_64.tar.gz"
+      downloadFile: "hook_x86_64.tar.gz"
       kernel: "vmlinuz-x86_64"
       initrd: "initramfs-x86_64"
       kernelCommandLine: ""
@@ -66,7 +66,7 @@ provision:
     "default-hook-aarch64":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-aarch64.tar.gz"
+      downloadFile: "hook_aarch64.tar.gz"
       kernel: "vmlinuz-aarch64"
       initrd: "initramfs-aarch64"
       kernelCommandLine: ""
@@ -75,7 +75,7 @@ provision:
     "latest-lts-aarch64":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-latest-lts-aarch64.tar.gz"
+      downloadFile: "hook_latest-lts-aarch64.tar.gz"
       kernel: "vmlinuz-latest-lts-aarch64"
       initrd: "initramfs-latest-lts-aarch64"
       kernelCommandLine: ""
@@ -84,7 +84,7 @@ provision:
     "armbian-uefi-x86-edge":
       enabled: false
       arch: "x86_64"
-      downloadFile: "hook-armbian-uefi-x86-edge.tar.gz"
+      downloadFile: "hook_armbian-uefi-x86-edge.tar.gz"
       kernel: "vmlinuz-armbian-uefi-x86-edge"
       initrd: "initramfs-armbian-uefi-x86-edge"
       kernelCommandLine: "intel_iommu=on iommu=pt"
@@ -94,7 +94,7 @@ provision:
     "armbian-uefi-arm64-edge":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-armbian-uefi-arm64-edge.tar.gz"
+      downloadFile: "hook_armbian-uefi-arm64-edge.tar.gz"
       kernel: "vmlinuz-armbian-uefi-arm64-edge"
       initrd: "initramfs-armbian-uefi-arm64-edge"
       kernelCommandLine: ""
@@ -103,7 +103,7 @@ provision:
     "armbian-meson64-edge":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-armbian-meson64-edge.tar.gz"
+      downloadFile: "hook_armbian-meson64-edge.tar.gz"
       kernel: "vmlinuz-armbian-meson64-edge"
       initrd: "initramfs-armbian-meson64-edge"
       kernelCommandLine: "acpi=off efi=noruntime"
@@ -112,7 +112,7 @@ provision:
     "armbian-rockchip64-edge":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-armbian-rockchip64-edge.tar.gz"
+      downloadFile: "hook_armbian-rockchip64-edge.tar.gz"
       kernel: "vmlinuz-armbian-rockchip64-edge"
       initrd: "initramfs-armbian-rockchip64-edge"
       kernelCommandLine: ""
@@ -121,7 +121,7 @@ provision:
     "armbian-bcm2711-current":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-armbian-bcm2711-current.tar.gz"
+      downloadFile: "hook_armbian-bcm2711-current.tar.gz"
       kernel: "vmlinuz-armbian-bcm2711-current"
       initrd: "initramfs-armbian-bcm2711-current"
       kernelCommandLine: ""
@@ -130,7 +130,7 @@ provision:
     "armbian-rk35xx-vendor":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-armbian-rk35xx-vendor.tar.gz"
+      downloadFile: "hook_armbian-rk35xx-vendor.tar.gz"
       kernel: "vmlinuz-armbian-rk35xx-vendor"
       initrd: "initramfs-armbian-rk35xx-vendor"
       kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
@@ -139,7 +139,7 @@ provision:
     "armbian-rk3588-edge":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-armbian-rk3588-edge.tar.gz"
+      downloadFile: "hook_armbian-rk3588-edge.tar.gz"
       kernel: "vmlinuz-armbian-rk3588-edge"
       initrd: "initramfs-armbian-rk3588-edge"
       kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
@@ -148,7 +148,7 @@ provision:
     "armbian-rk35xx-legacy":
       enabled: false
       arch: "aarch64"
-      downloadFile: "hook-armbian-rk35xx-legacy.tar.gz"
+      downloadFile: "hook_armbian-rk35xx-legacy.tar.gz"
       kernel: "vmlinuz-armbian-rk35xx-legacy"
       initrd: "initramfs-armbian-rk35xx-legacy"
       kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
