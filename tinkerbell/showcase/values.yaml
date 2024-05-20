@@ -208,9 +208,9 @@ provision:
     "armbian-uefi-arm64-edge-cloud-k8s":
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.04-armsurvivors-86/Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
-      image: "Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.gz"
-      conversion: "xz-to-gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
       doFixResolvConf: true
@@ -219,9 +219,9 @@ provision:
     "armbian-uefi-x86-edge-cloud-k8s":
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.04-armsurvivors-86/Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
-      image: "Armbian-unofficial_24.04.04-armsurvivors-86_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.gz"
-      conversion: "xz-to-gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
       doFixResolvConf: true
@@ -231,8 +231,8 @@ provision:
     "armbian-rpardini-rockpro64-edge-uboot":
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.03.30-armsurvivors-64/Armbian-unofficial_24.03.30-armsurvivors-64_Rockpro64_bookworm_edge_6.8.2.img.xz"
-      image: "Armbian-unofficial_24.03.30-armsurvivors-64_Rockpro64_bookworm_edge_6.8.2.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Rockpro64_bookworm_edge_6.8.2.img.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Rockpro64_bookworm_edge_6.8.2.img.gz"
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
@@ -242,19 +242,31 @@ provision:
     "armbian-rpardini-orangepi3b-edge-uboot":
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.12-armsurvivors-166/Armbian-unofficial_24.05.12-armsurvivors-166_Orangepi3b_bookworm_edge_6.8.9.img.xz"
-      image: "Armbian-unofficial_24.05.12-armsurvivors-166_Orangepi3b_bookworm_edge_6.8.9.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Orangepi3b_bookworm_edge_6.8.9.img.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Orangepi3b_bookworm_edge_6.8.9.img.gz"
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
       doFixResolvConf: true
       rootfsPartitionNumber: "1"
     
+    "armbian-rpardini-t95z-cloud-edge-uboot":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_T95z_bookworm_edge_6.8.10-metadata-cloud.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_T95z_bookworm_edge_6.8.10-metadata-cloud.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "1" # rootfs is the one and only
+    
     "armbian-rpardini-rpi4b-current-not-efi":
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.03.30-armsurvivors-64/Armbian-unofficial_24.03.30-armsurvivors-64_Rpi4b_bookworm_current_6.6.23.img.xz"
-      image: "Armbian-unofficial_24.03.30-armsurvivors-64_Rpi4b_bookworm_current_6.6.23.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Rpi4b_bookworm_current_6.6.23.img.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Rpi4b_bookworm_current_6.6.23.img.gz"
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
@@ -264,8 +276,8 @@ provision:
     "armbian-rpardini-r58x-vendor-uboot": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.03.30-armsurvivors-64/Armbian-unofficial_24.03.30-armsurvivors-64_Mekotronics-r58x-pro_bookworm_vendor_6.1.43.img.xz"
-      image: "Armbian-unofficial_24.03.30-armsurvivors-64_Mekotronics-r58x-pro_bookworm_vendor_6.1.43.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Mekotronics-r58x-pro_bookworm_vendor_6.1.43.img.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Mekotronics-r58x-pro_bookworm_vendor_6.1.43.img.gz"
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
@@ -275,8 +287,8 @@ provision:
     "armbian-rpardini-r58x-vendor-uefi-cloud": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.03.31-armsurvivors-68/Armbian-unofficial_24.03.31-armsurvivors-68_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.xz"
-      image: "Armbian-unofficial_24.03.31-armsurvivors-68_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.gz"
       conversion: "xz-to-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
@@ -286,8 +298,8 @@ provision:
     "rock-5b-edge-trixie-uefi-dtb": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
       enabled: false
       arch: "aarch64"
-      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.04.05-armsurvivors-87/Armbian-unofficial_24.04.05-armsurvivors-87_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.xz"
-      image: "Armbian-unofficial_24.04.05-armsurvivors-87_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.gz"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.20-armsurvivors-184/Armbian-unofficial_24.05.20-armsurvivors-184_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.xz"
+      image: "Armbian-unofficial_24.05.20-armsurvivors-184_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.gz"
       conversion: "xz-to-gz" # @TODO: "qcow2-xz-to-img-gz" one day for completeness
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
@@ -436,11 +448,11 @@ hardware:
       enabled: false
       arch: aarch64
       mac: "c8:63:14:71:2a:6d"
-      rootDisk: "/dev/NOT_YET"
+      rootDisk: "/dev/sda" # USB Disk plugged in
       ipv4:
         address: "192.168.99.27"
       hookRef: "armbian-meson64-edge"
-      imageRef: "ubuntu-jammy-cloud-arm64" # @TODO wrong
+      imageRef: "armbian-rpardini-t95z-cloud-edge-uboot"
       extraKernelCommandLine: "console=ttyAML0,115200"
     
     # RockPro64 and other rockchip64-based boards (u-boot)
