@@ -47,10 +47,10 @@ showcase:
       ####  `export MAC=11:22:33:44:55:66 TINK_SERVER=x.y.z.y` can be used with the below "machines".
       ####  The MAC address is not really used by the qemu VM, but is passed via kernel cmdline.
       "run-qemu-x86":
-        enabled: false
+        enabled: true
         mac: "11:22:33:44:55:66"
       "run-qemu-arm64":
-        enabled: false
+        enabled: true
         mac: "11:22:33:44:55:77"
       
       
@@ -129,10 +129,10 @@ showcase:
         #hookRef: "dev-default-hook-amd64" # "default-hook-amd64" # defined above
 
         #imageRef: "fatso-el9-local-amd64"
-        imageRef: "fatso-ubuntu-noble-local-amd64"
+        #imageRef: "fatso-ubuntu-noble-local-amd64"
         #imageRef: "fatso-rocky8-baremetal-amd64"
         #imageRef: "fatso-rocky8-local-amd64"
-        #imageRef: "fatso-ubuntu-noble-baremetal-amd64"
+        imageRef: "fatso-ubuntu-noble-baremetal-amd64"
         #imageRef: "fatso-ubuntu-noble-local-amd64"
       
       
@@ -147,6 +147,17 @@ showcase:
         rootDisk: "/dev/mmcblk0"
         ipv4:
           address: "192.168.99.51"
+
+      "t95z":
+        enabled: true
+        arch: aarch64
+        mac: "ea:da:5c:76:8d:09"
+        rootDisk: "/dev/sda" # USB Disk plugged in
+        ipv4:
+          address: "192.168.99.27"
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+      
       
       # RockPro64 and other rockchip64-based boards (u-boot)
       "rockpro64":
@@ -160,7 +171,7 @@ showcase:
       "orangepi3b":
         enabled: false
         mac: "b6:a7:96:d5:f1:84"
-        rootDisk: "/dev/disk/by-id/wwn-0x3001237923792379" # /dev/mmcblk0 is the eMMC
+        rootDisk: "/dev/sda" # usb disk # "/dev/disk/by-id/wwn-0x3001237923792379" # /dev/mmcblk0 is the eMMC
         ipv4:
           address: "192.168.99.53"
       
