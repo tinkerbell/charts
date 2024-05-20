@@ -85,6 +85,29 @@ data:
     fi
     {{- end }}
 
+    {{- if eq "xz-qcow2-to-img-gz" $image.conversion }}
+    # Download, decompress xz, convert qcow2 to img, compress img to gz.
+    image_url="{{ $image.downloadURL }}"
+    file="/output/{{ $image.image }}"
+    if [[ ! -f "$file" ]]; then
+      echo "Image file $file does not exist. Downloading...."
+      apk add --update pigz pixz qemu-img
+      wget "$image_url" -O "${file}.tmp.xz"
+      echo "Done downloading image. Decompressing xz..."  
+      pixz -d < "${file}.tmp.xz" > "${file}.tmp.unxz"
+      rm -v "${file}.tmp.xz"
+      echo "Done decompressing xz, converting qcow2 to img..."
+      qemu-img convert -O raw "${file}.tmp.unxz" "${file}.tmp.raw"
+      rm -v "${file}.tmp.unxz"
+      echo "Done converting qcow2 to img, compressing img to gz..."
+      pigz < "${file}.tmp.raw" > "${file}"
+      rm -v "${file}.tmp.raw"
+      echo "Done converting image."
+    else
+      echo "Image file $file already exists. Skipping download."
+    fi
+    {{- end }}
+
     {{- if eq "download-only" $image.conversion }}
     # Download only. Image is already in format necessary.
     image_url="{{ $image.downloadURL }}"
