@@ -59,7 +59,7 @@ spec:
   disks:
     - device: "{{ $rootDiskDevice }}"
   userData: |
-    {{- $mergedDevice.userData | default "echo 'tinkerbell-showcase: userData not configured for device';" | nindent 4 }}
+    {{- $mergedDevice.userData | default "#!/bin/bash\necho 'tinkerbell-showcase: userData not configured for device' >&2;" | nindent 4 }}
   metadata:
     facility:
       facility_code: tinkerbell-showcase
