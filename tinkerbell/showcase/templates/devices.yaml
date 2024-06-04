@@ -275,7 +275,7 @@ spec:
 
           {{- if eq $hookObj.bootMode "kexec" }}
           - name: "kexec-{{ $deviceId }}"
-            image: ghcr.io/jacobweinstock/waitdaemon:latest
+            image: {{ $.Values.actions.repository }}/waitdaemon:{{ $.Values.actions.version }}
             timeout: 90
             pid: host
             environment:
@@ -289,7 +289,7 @@ spec:
 
           {{- if eq $hookObj.bootMode "reboot" }}
           - name: "reboot-{{ $deviceId }}"
-            image: ghcr.io/jacobweinstock/waitdaemon:latest
+            image: {{ $.Values.actions.repository }}/waitdaemon:{{ $.Values.actions.version }}
             timeout: 90
             pid: host
             command: ["reboot"]
