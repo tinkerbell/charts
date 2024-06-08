@@ -219,7 +219,8 @@ smee:
   logLevel: "debug"
   tinkWorkerImage: quay.io/tinkerbell/tink-worker:v0.10.0
   #image: quay.io/tinkerbellrpardini/smee:latest-rpardini5 # custom build with updated ipxedust; some DTBs; pxelinux.cfg
-  image: quay.io/tinkerbellrpardini/smee:latest-rpardini8 # custom build with updated ipxedust; some DTBs; pxelinux.cfg; HC4 DT; rebased vs upstream/main after a long while
+  #image: quay.io/tinkerbellrpardini/smee:latest-rpardini8 # custom build with updated ipxedust; some DTBs; pxelinux.cfg; HC4 DT; rebased vs upstream/main after a long while
+  image: quay.io/tinkerbellrpardini/smee:latest-rpardini10 # custom build with updated ipxedust; some DTBs; pxelinux.cfg; +T6/CM3588-NAS DTs; rebased vs upstream/main 20240608
   # @TODO bug in smee chart, the values is under http: but the usage is not
   trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
   publicIP: 192.168.99.2 # Must be set
