@@ -18,8 +18,8 @@ provision:
   common:
     # Used together with downloadFile field in each hook;
     # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
-    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240604-0609/"
-    hookDownloadId: "20240604-0609" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240608-2139/"
+    hookDownloadId: "20240608-2139" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
   
   # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
   # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
@@ -267,6 +267,18 @@ provision:
       arch: "aarch64"
       downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Odroidhc4_bookworm_edge_6.8.10-metadata-cloud.img.qcow2.xz"
       image: "Armbian-unofficial_24.05.22-armsurvivors-189_Odroidhc4_bookworm_edge_6.8.10-metadata-cloud.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "1" # rootfs is the one and only
+    
+    "armbian-rpardini-nanopct6-cloud-uboot":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.06.07-armsurvivors-215/Armbian-unofficial_24.06.07-armsurvivors-215_Nanopct6_bookworm_edge_6.10.0-rc2-metadata-cloud.img.qcow2.xz"
+      image: "Armbian-unofficial_24.06.07-armsurvivors-215_Nanopct6_bookworm_edge_6.10.0-rc2-metadata-cloud.img.gz"
       conversion: "xz-qcow2-to-img-gz"
       doGrowPart: false # Armbian does it itself when booted
       doUserAndSshSetup: false # Armbian does it itself when booted
@@ -525,3 +537,25 @@ hardware:
       hookRef: "armbian-rk35xx-vendor"
       imageRef: "armbian-rpardini-r58x-vendor-uefi-cloud" # "armbian-rpardini-r58x-vendor-uboot"
       extraKernelCommandLine: "console=tty1 console=ttyFIQ0,1500000 " #    # Last console defined "wins", thus use tty1 last if no serial console
+
+    "nanopct6lan1":
+      enabled: false
+      arch: aarch64
+      mac: "8e:b4:90:97:32:30"
+      rootDisk: "/dev/nvme0NOENOENOENEyet"
+      ipv4:
+        address: "192.168.99.171"
+      hookRef: "armbian-rk3588-edge"
+      imageRef: "armbian-rpardini-nanopct6-cloud-uboot" # "armbian-rpardini-r58x-vendor-uboot"
+      extraKernelCommandLine: "console=ttyS2,1500000 " #    # Last console defined "wins", thus use tty1 last if no serial console
+
+    "nanopct6lan2":
+      enabled: false
+      arch: aarch64
+      mac: "8e:b4:90:97:32:31"
+      rootDisk: "/dev/nvme0NOENOENOENEyet"
+      ipv4:
+        address: "192.168.99.172"
+      hookRef: "armbian-rk3588-edge"
+      imageRef: "armbian-rpardini-nanopct6-cloud-uboot" # "armbian-rpardini-r58x-vendor-uboot"
+      extraKernelCommandLine: "console=ttyS2,1500000 " #    # Last console defined "wins", thus use tty1 last if no serial console
