@@ -193,7 +193,8 @@ provision:
       doFixResolvConf: false
       doInjectHegelCloudInit: true
       rootfsPartitionNumber: "2" # First one is ESP
-      doAddEFIBootEntry: true
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
     
     "fatso-el9-baremetal-amd64":
       enabled: false
@@ -205,7 +206,8 @@ provision:
       doUserAndSshSetup: false
       doFixResolvConf: false
       rootfsPartitionNumber: "2" # First one is ESP
-      doAddEFIBootEntry: true
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
     
     "armbian-uefi-arm64-edge-cloud-k8s":
       enabled: false
@@ -345,7 +347,8 @@ provision:
       doFixResolvConf: false
       doInjectHegelCloudInit: true
       rootfsPartitionNumber: "2" # First one is ESP
-      doAddEFIBootEntry: true
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
     
     "fatso-el9-local-amd64":
       enabled: false
@@ -357,7 +360,8 @@ provision:
       doUserAndSshSetup: false
       doFixResolvConf: false
       rootfsPartitionNumber: "2" # First one is ESP
-      doAddEFIBootEntry: true
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
 
 
 # Generates CRs triplets with Hardware, Workflow, and Template, using by-id references to the hook and images above.

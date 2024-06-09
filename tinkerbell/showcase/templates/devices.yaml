@@ -32,21 +32,26 @@
 {{- $rootDiskRootfsPartitionNumber := printf "%s" $imageObj.rootfsPartitionNumber }}
   # rootDiskRootfsPartitionNumber is {{$rootDiskRootfsPartitionNumber}}
 {{- $rootDiskRootfsPartitionDevice := "unknown" }}
+{{- $espPartitionDevice := "unknown" }}
+{{- $espPartitionNumber := "1" }}
 
 {{- if hasPrefix "/dev/disk/" $rootDiskDevice }}
   # YES! {{$rootDiskDevice}} begins with /dev/disk
 {{- $rootDiskRootfsPartitionDevice = printf "%s-part%s" $rootDiskDevice $rootDiskRootfsPartitionNumber  }}
+{{- $espPartitionDevice = printf "%s-part%s" $rootDiskDevice $espPartitionNumber  }}
 {{- else }}
   # NO! {{$rootDiskDevice}} does not begin with /dev/disk
 {{- if regexMatch "[0-9]$" $rootDiskDevice }}
   # YES! {{$rootDiskDevice}} ends with a digit - REGEX MATCH
 {{- $rootDiskRootfsPartitionDevice = printf "%sp%s" $rootDiskDevice $rootDiskRootfsPartitionNumber  }}
+{{- $espPartitionDevice = printf "%sp%s" $rootDiskDevice $espPartitionNumber  }}
 {{- else }}
   # NO! {{$rootDiskDevice}} does not end with a digit - REGEX NOT MATCH
 {{- $rootDiskRootfsPartitionDevice = printf "%s%s" $rootDiskDevice $rootDiskRootfsPartitionNumber  }}
+{{- $espPartitionDevice = printf "%s%s" $rootDiskDevice $espPartitionNumber  }}
 {{- end }}
 {{- end }}
-  # Thus at the end of the day, $rootDiskRootfsPartitionDevice is {{$rootDiskRootfsPartitionDevice}}
+  # Thus at the end of the day, $rootDiskRootfsPartitionDevice is {{$rootDiskRootfsPartitionDevice}} and ESP is {{$espPartitionDevice}}
 ---
 apiVersion: "tinkerbell.org/v1alpha1"
 kind: Hardware
@@ -282,7 +287,19 @@ spec:
               FS_TYPE: ext4
               CHROOT: y
               DEFAULT_INTERPRETER: "/bin/bash -c"
-              CMD_LINE: "set -x; mount; lsblk; blkid; mount -o remount,rw /sys; mount -t efivarfs none /sys/firmware/efi/efivars; mount; efibootmgr --verbose; efibootmgr --create --disk '{{ $rootDiskDevice }}' --label PROViSiONED; efibootmgr --verbose"
+              CMD_LINE: "set -x; mount; lsblk; blkid; mount -o remount,rw /sys; mount -t efivarfs none /sys/firmware/efi/efivars; mount; efibootmgr --verbose; efibootmgr --create --disk '{{ $rootDiskDevice }}' --label PROViSiONED; efibootmgr --verbose; umount /sys/firmware/efi/efivars; sync"
+          {{- end }}
+
+          {{- if ($imageObj.doRestoreGRUBNormalcy )  }}
+          - name: "restore-grub-normalcy-{{ $deviceId }}"
+            image: {{ $.Values.actions.repository }}/cexec:{{ $.Values.actions.version }}
+            timeout: 90
+            environment:
+              BLOCK_DEVICE: {{$rootDiskRootfsPartitionDevice}}
+              FS_TYPE: ext4
+              CHROOT: y
+              DEFAULT_INTERPRETER: "/bin/bash -c"
+              CMD_LINE: "set -x; mount; lsblk; blkid; mount -o remount,rw /sys; mount -t efivarfs none /sys/firmware/efi/efivars; mount '{{ $espPartitionDevice }}' /boot; mount; rm -rfv /boot/ubuntu /boot/loader /boot/EFI; mkdir -pv /boot/EFI; update-initramfs -k all -c; echo 'GRUB_CMDLINE_LINUX_DEFAULT=\"${GRUB_CMDLINE_LINUX_DEFAULT} {{$mergedDevice.extraKernelCommandLine}}\"' > /etc/default/grub.d/60-provisioned.cfg; cat /etc/default/grub.d/60-provisioned.cfg; mv -v /etc/os-release /etc/os-release.hold; echo 'NAME={{$mergedDevice.imageRef}}' > /etc/os-release; grub-install --efi-directory /boot '--bootloader-id={{$mergedDevice.imageRef}}'; update-grub; tree /boot; cat /boot/grub/grub.cfg; efibootmgr --verbose; umount /sys/firmware/efi/efivars; umount /boot; mv -v /etc/os-release.hold /etc/os-release; sync"
           {{- end }}
 
           {{- if eq $hookObj.bootMode "kexec" }}
