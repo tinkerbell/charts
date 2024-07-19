@@ -1,0 +1,75 @@
+{{- if .Values.hookImageServer.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "hook-image-server-nginx-conf"
+  namespace: {{ .Release.Namespace | quote }}
+data:
+  nginx.conf: |
+    worker_processes 1;
+    events {
+        worker_connections  1024;
+    }
+    user root;
+    http {
+       server {
+        listen 3000;
+        location / {
+          sendfile           on;
+          sendfile_max_chunk 1m;
+          root /usr/share/nginx/html;
+          autoindex on;
+        }
+      }
+    }
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hook-image-server
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  selector:
+    matchLabels:
+      app: hook-image-server
+  replicas: 1
+  template:
+    metadata:
+      annotations:
+        checksum: "@TODO" # @TODO hash like download jobs
+      labels:
+        app: hook-image-server
+    spec:
+      containers:
+        - name: hook-image-server
+          image: nginx:1
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+              name: http
+          resources:
+            limits:
+              cpu: 500m
+              memory: 128Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+          volumeMounts:
+            - mountPath: /etc/nginx
+              readOnly: true
+              name: nginx-conf
+            - mountPath: /usr/share/nginx/html
+              name: hook-artifacts
+              readOnly: true
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: "hook-image-server-nginx-conf"
+            items:
+              - key: nginx.conf
+                path: nginx.conf
+        - name: hook-artifacts
+          hostPath:
+            path: {{ .Values.showcase.tinkerbell.hostDirectory }}
+            type: DirectoryOrCreate
+{{- end }}

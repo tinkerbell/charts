@@ -1,0 +1,103 @@
+{{- range $hookId, $hook := .Values.provision.hook }}
+{{- $common := $.Values.provision.common -}}
+{{- $hook = merge $hook $common }}
+---
+# --> HookId: {{$hookId}}
+  # downloadId: {{ $hook.hookDownloadId }}
+  # downloadFile: {{ $hook.downloadFile }}
+  # hookDownloadBaseUrl: {{ $hook.hookDownloadBaseUrl }}
+{{- $hash := trunc 8 (sha1sum (printf "%s-%s-%s" $hook.hookDownloadId $hook.hookDownloadBaseUrl $hook.downloadFile)) }}
+# Loop over $.Values.hardware.devices (a dictionary) and for each value, check if it's hookRef matches this $hookId - if so, enable this hook.
+{{- $enabledByDeviceUsage := false }}
+{{- range $device := $.Values.hardware.devices }}
+# Testing {{$device.hookRef}} against {{$hookId}}...
+{{- if and $device.enabled (eq $device.hookRef $hookId) -}}
+  # YES!
+{{- $enabledByDeviceUsage = true -}}
+{{- else -}}
+  # NO!
+{{- end -}}
+{{- end }}
+
+{{- if or $enabledByDeviceUsage $hook.enabled }}
+# Enabled hook: {{$hookId}} - force enabled? {{$hook.enabled}} -- enabled by device usage? {{$enabledByDeviceUsage}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "download-hook-{{$hookId}}-{{$hash}}"
+  namespace: "{{ $.Release.Namespace }}"
+  labels:
+    "app.kubernetes.io/instance": "{{ $.Release.Name }}"
+    "app.kubernetes.io/part-of": "tinkerbell-showcase"
+data:
+  entrypoint.sh: |
+    #!/usr/bin/env bash
+    # This script is designed to download the Hook artifacts.
+    set -euxo pipefail
+    if [[ -f "/output/download_hook_{{$hookId}}_{{$hash}}.done" ]]; then
+    	echo "Hook already downloaded ({{$hookId}} - hash: {{$hash}}), skipping."
+    	exit 0
+    fi
+
+    {{
+    if $hook.skipDownload 
+    }}
+    echo "Skipping download for hook {{$hookId}}."
+    ls -lah "/output/{{$hook.kernel}}"
+    ls -lah "/output/{{$hook.initrd}}"
+    touch "/output/download_hook_{{$hookId}}_{{$hash}}.done"
+    {{ else }}
+    mkdir -p "/output/download_hook_{{$hookId}}"
+    cd "/output/download_hook_{{$hookId}}"
+    declare down_url="{{ $hook.hookDownloadBaseURL }}{{$hook.downloadFile}}"
+    declare down_file="/output/download_hook_{{$hookId}}/{{$hook.downloadFile}}"
+    wget -O "${down_file}.tmp" "${down_url}"
+    mv -v "${down_file}.tmp" "${down_file}"
+    mkdir -p "/output/download_hook_{{$hookId}}/extract"
+    cd "/output/download_hook_{{$hookId}}/extract"
+    tar -xvzf "${down_file}"
+    mv -v "/output/download_hook_{{$hookId}}/extract/"* /output/
+    rm -rf "/output/download_hook_{{$hookId}}"
+    ls -lah "/output/{{$hook.kernel}}"
+    ls -lah "/output/{{$hook.initrd}}"
+    touch "/output/download_hook_{{$hookId}}_{{$hash}}.done"    {{ end }}
+
+---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "download-hook-{{$hookId}}-{{$hash}}"
+  namespace: {{ $.Release.Namespace }}
+  labels:
+    "app.kubernetes.io/instance": "{{ $.Release.Name }}"
+    "app.kubernetes.io/part-of": "tinkerbell-showcase"
+spec:
+  backoffLimit: 50
+  template:
+    metadata:
+      labels:
+        app: download-hook
+    spec:
+      containers:
+        - name: download-hook-{{$hookId}}
+          image: bash:5
+          command: [ "/script/entrypoint.sh" ]
+          volumeMounts:
+            - mountPath: /output
+              name: hook-artifacts
+            - mountPath: /script
+              name: configmap-volume
+      restartPolicy: OnFailure
+      volumes:
+        - name: hook-artifacts
+          hostPath:
+            path: {{ $.Values.tinkerbell.hostDirectory | quote }}
+            type: DirectoryOrCreate
+        - name: configmap-volume
+          configMap:
+            defaultMode: 0700
+            name: "download-hook-{{$hookId}}-{{$hash}}"
+{{- else }}
+# Disabled Hook: {{$hookId}}
+{{- end }}
+{{- end }}

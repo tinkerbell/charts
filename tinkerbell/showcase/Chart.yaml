@@ -1,0 +1,6 @@
+apiVersion: v2
+name: showcase
+description: Generates Tinkerbell CR's for a plethora of standard and exotic hardware; downloads & prepares Hook and OS images for provisioning
+type: application
+version: "0.0.2"
+

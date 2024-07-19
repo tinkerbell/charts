@@ -1,0 +1,20 @@
+{{- if .Values.nodePort.hookImageServer.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: hook-image-server
+  name: hook-image-server-nodeport
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - name: http
+      port: 3000
+      nodePort: {{ .Values.nodePort.hookImageServer.port }}
+      protocol: TCP
+  selector:
+    app: hook-image-server
+{{- end }}

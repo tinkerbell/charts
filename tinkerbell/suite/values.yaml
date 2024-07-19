@@ -1,0 +1,245 @@
+# -- Overrides
+# The values defined here override those in the individual charts. Some of them require tweaking
+# before deployment as they are environment dependent; others are surfaced for convenience.
+#
+# See individual chart documentation for additional detail.
+
+# 67 - smee dhcp, hostNetwork; NodePort? (my guess is this requires hostNetwork, NodePort (kube-proxy) won't suffice
+# 69 - smee tftp, hostNetwork; NodePort? NodePort might or not suffice, no idea.
+# 514 - smee syslog, hostNetwork; NodePort
+# 7171 - smee http, should be directly exposed via hostNetwork (used for dhcp) anyway, but could be via NodePort or ingress too
+# 50061 - hegel http. either NodePort or ingress
+# 42113 - tink grpc. Either NodePort or ingress (special grpc_pass)
+
+# Scenarios to test:
+# simple bare k3s on bare vm (hostNetwork for everything, but maybe a few NodePorts needed for grpc and hegel)
+# k3s clustered 2+ nodes: NodePorts for everything, can run a replica of everything on each node, only one dhcp will ever be used
+
+hookImageServer:
+  enabled: true
+
+nodePort:
+  hookImageServer:
+    enabled: true
+    port: 32083
+  hegel:
+    enabled: true
+    port: 32061
+  tinkGRPC:
+    enabled: true
+    port: 32013
+
+showcase:
+  enabled: true
+  hardware:
+    common:
+      uefi: true
+      ipv4:
+        # @TODO: Use _your_ values here! Also in the ipv4.address of the devices!
+        gateway: "192.168.99.1" # Must be set, otherwise no internet access; can be overriden per-device
+        netmask: "255.255.255.0"
+        dns: [ "192.168.66.1" ]
+        time_servers: [ "192.168.66.1" ]
+
+    devices:
+      ####  Examples for use in Hook development environment.
+      ####  There is a `bash build.sh build-run-qemu` command in Hook, that paired with
+      ####  `export MAC=11:22:33:44:55:66 TINK_SERVER=x.y.z.y` can be used with the below "machines".
+      ####  The MAC address is not really used by the qemu VM, but is passed via kernel cmdline.
+      "run-qemu-x86":
+        enabled: false
+        mac: "11:22:33:44:55:66"
+      "run-qemu-arm64":
+        enabled: false
+        mac: "11:22:33:44:55:77"
+      
+      
+      ### Examples for virtual machines, ran outside of Hook's build system.
+      ### Most virtualization software has support for PXE booting.
+      ### You will need to have (bridging/etc) setup to get a proper IP address from a real Smee, etc.
+      "vm03": # For Armbian kernel Hook, and Ubuntu cloud image
+        enabled: false
+        arch: aarch64
+        mac: "52:54:00:01:03:03"
+        rootDisk: "/dev/vdb"
+        ipv4:
+          address: "192.168.99.41"
+      
+      "vm04": # For default arm64 kernel Hook, and Ubuntu cloud image
+        enabled: false
+        arch: aarch64
+        mac: "52:54:00:01:03:04"
+        rootDisk: "/dev/vdb"
+        ipv4:
+          address: "192.168.99.41"
+
+      "vm08":
+        enabled: false
+        arch: x86_64
+        mac: "52:54:00:01:03:08"
+        rootDisk: "/dev/disk/by-id/virtio-root_disk_serial"
+        ipv4:
+          address: "192.168.99.59"
+        extraKernelCommandLine: "console=ttyS0"
+        imageRef: "fatso-ubuntu-noble-local-amd64"
+        #imageRef: "fatso-ubuntu-noble-baremetal-amd64"
+        hookRef: "default-hook-amd64"
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+        #hookOverride:
+        #  bootMode: kexec
+
+      "vm09":
+        enabled: false
+        arch: x86_64
+        mac: "52:54:00:01:03:09"
+        rootDisk: "/dev/disk/by-id/virtio-root_disk_serial"
+        ipv4:
+          address: "192.168.99.61"
+        extraKernelCommandLine: "console=ttyS0"
+        imageRef: "fatso-ubuntu-noble-baremetal-amd64" # "fatso-ubuntu-noble-local-amd64"
+        hookRef: "default-hook-amd64"
+        #hookOverride:
+        #  bootMode: kexec
+      
+      
+      "thundercat":
+        enabled: false
+        arch: x86_64
+        #mac: "3c:18:a0:15:9a:9f" # thinkpad 100mbit/s?
+        #mac: "8c:ae:4c:dd:10:78" # 2.5gbit plugable
+        mac: "3c:18:a0:95:69:f7" # amazonbasics white usb3
+        rootDisk: "/dev/sda"
+        ipv4:
+          address: "192.168.99.70"
+        #extraKernelCommandLine: "console=ttyUSB0,115200" 
+        #extraKernelCommandLine: "console=tty0 "
+        extraKernelCommandLine: "console=tty0 " # console=ttyUSB0,115200 # n8 breaks getty?
+        #hookOverride:
+        #  bootMode: kexec
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+
+        #hookRef: "latest-lts-amd64"
+        hookRef: "default-hook-amd64"
+        #hookRef: "armbian-uefi-x86-edge" # "default-hook-amd64" # defined above
+        #hookRef: "peg-default-amd64" # "default-hook-amd64" # defined above
+        #hookRef: "pegk-default-amd64" # "default-hook-amd64" # defined above
+        #hookRef: "dev-pegk-default-amd64" # "default-hook-amd64" # defined above
+        #hookRef: "dev-default-hook-amd64" # "default-hook-amd64" # defined above
+
+        #imageRef: "fatso-el9-local-amd64"
+        #imageRef: "fatso-ubuntu-noble-local-amd64"
+        #imageRef: "fatso-rocky8-baremetal-amd64"
+        #imageRef: "fatso-rocky8-local-amd64"
+        imageRef: "fatso-ubuntu-noble-baremetal-amd64"
+        #imageRef: "fatso-ubuntu-noble-local-amd64"
+      
+      
+      ###
+      ### Examples for actual bare-metal hardware, mostly arm64 SBCs.
+      ###
+      
+      # Khadas VIM3L and other meson64-based boards (u-boot)
+      "vim3l":
+        enabled: false
+        mac: "c8:63:14:71:2a:6d"
+        rootDisk: "/dev/mmcblk0"
+        ipv4:
+          address: "192.168.99.51"
+
+      "t95z":
+        enabled: false
+        arch: aarch64
+        mac: "ea:da:5c:76:8d:09"
+        rootDisk: "/dev/sda" # USB Disk plugged in
+        ipv4:
+          address: "192.168.99.27"
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+      
+      "odroidhc4":
+        enabled: false
+        arch: aarch64
+        mac: "00:1e:06:49:15:91"
+        rootDisk: "/dev/sda" # SATA Disk plugged in
+        ipv4:
+          address: "192.168.99.28"
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+      
+      # RockPro64 and other rockchip64-based boards (u-boot)
+      "rockpro64":
+        enabled: false
+        mac: "2a:36:cb:a2:ae:b8"
+        #rootDisk: "/dev/mmcblk2"  # mmcblk2 is the eMMC, mmcblk1 is the SD card
+        rootDisk: "/dev/disk/by-id/mmc-AJTD4R_0x0b05e84d" # much safer to use this style
+        ipv4:
+          address: "192.168.99.52"
+      
+      "orangepi3b":
+        enabled: false
+        mac: "b6:a7:96:d5:f1:84"
+        rootDisk: "/dev/sda" # usb disk # "/dev/disk/by-id/wwn-0x3001237923792379" # /dev/mmcblk0 is the eMMC
+        ipv4:
+          address: "192.168.99.53"
+      
+      # Raspberry Pi 4B (bcm2711), using edk2 UEFI firmware on an SD card, and an external NVMe-USB disk
+      "rpi4b":
+        enabled: false
+        mac: "dc:a6:32:ec:8b:49"
+        rootDisk: "/dev/disk/by-id/wwn-0x3001237923792379" # a specific USB disk, by-id.
+        ipv4:
+          address: "192.168.99.54"
+        userData: |
+          #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+      
+      "mekotronics-r58x-pro-via-usb":
+        enabled: false
+        mac: "3c:18:a0:15:9a:9f" # 3C18A0159A9F
+        ipv4:
+          address: "192.168.99.55"
+        rootDisk: "/dev/disk/by-id/nvme-WD_Blue_SN570_1TB_231421807346" # Gooo!
+  
+  
+  tinkerbell:
+    hostDirectory: "/opt/hook-jolly-roger" # This will be needed in smee one day as well, to serve DTB files over TFTP for u-boot
+    # These two should point to hookImageServer
+    hookURL: "http://192.168.99.2:32083"
+    imagesURL: "http://192.168.99.2:32083"
+    # points to smee at :514
+    syslogHost: "192.168.99.2"
+    # tink's grpc nodeport
+    grpcAuthority: "192.168.99.2:32013"
+    # Hegel nodeport
+    hegelURL: "http://192.168.99.2:32061"
+
+smee:
+  hostNetwork: true # no proxies, loadbalancers, or anything: it just runs as if directly on the k8s host.
+  logLevel: "debug"
+  tinkWorkerImage: quay.io/tinkerbell/tink-worker:v0.10.0
+  #image: quay.io/tinkerbellrpardini/smee:latest-rpardini5 # custom build with updated ipxedust; some DTBs; pxelinux.cfg
+  #image: quay.io/tinkerbellrpardini/smee:latest-rpardini8 # custom build with updated ipxedust; some DTBs; pxelinux.cfg; HC4 DT; rebased vs upstream/main after a long while
+  image: quay.io/tinkerbellrpardini/smee:latest-rpardini10 # custom build with updated ipxedust; some DTBs; pxelinux.cfg; +T6/CM3588-NAS DTs; rebased vs upstream/main 20240608
+  # @TODO bug in smee chart, the values is under http: but the usage is not
+  trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
+  publicIP: 192.168.99.2 # Must be set
+  imagePullPolicy: Always # I re-push it there sometimes
+  deployment:
+    strategy:
+      type: Recreate # stop old pod before creating a new one
+
+hegel:
+  image: quay.io/tinkerbell/hegel:v0.12.0
+  trustedProxies: [ "0.0.0.0/0" ] # Trust _all_ proxies, insecure
+
+rufio:
+  image: quay.io/tinkerbell/rufio:v0.3.3
+
+tink:
+  controller:
+    image: quay.io/tinkerbell/tink-controller:latest # make sure we work with latest version
+    imagePullPolicy: Always
+  server:
+    image: quay.io/tinkerbell/tink:latest # to make sure we work with the la
+    imagePullPolicy: Always

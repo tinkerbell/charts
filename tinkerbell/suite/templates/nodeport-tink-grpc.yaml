@@ -1,0 +1,21 @@
+{{- if .Values.nodePort.tinkGRPC.enabled }}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: tink-server
+  name: tink-grpc-nodeport
+  namespace: {{ .Release.Namespace | quote }}
+spec:
+  type: NodePort
+  externalTrafficPolicy: Local
+  ports:
+    - name: tink-grpc
+      nodePort: {{ .Values.nodePort.tinkGRPC.port }}
+      protocol: TCP
+      port: 42113
+      targetPort: tink-grpc
+  selector:
+    app: tink-server
+{{- end }}

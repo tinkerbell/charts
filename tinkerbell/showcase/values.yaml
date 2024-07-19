@@ -1,0 +1,569 @@
+# Basic information on how Tinkerbell is setup.
+tinkerbell:
+  hostDirectory: "/opt/hook" # hostPath where Hook & images are downloaded & served from
+  hookURL: "http://192.168.66.71:8080" # # URL where Hook is served from
+  imagesURL: "http://192.168.66.71:8080" # # URL where images are served from
+  hegelURL: "http://192.168.66.71:32061" # Hegel URL
+  syslogHost: "192.168.66.71" # Syslog host, usually smee
+  grpcAuthority: "192.168.66.71:42113" # Tink's gRPC authority
+
+actions:
+  repository: "quay.io/tinkerbellrpardini/actions" # rpardini's fork with some fixes for arm64
+  version: "latest"
+
+# Generates download jobs and configs for easy show-off'ing of Tinkerbell on diverse hardware
+provision:
+  # @TODO: many simultaneous download jobs can drive an SD-card/low-bandwidth cluster to its knees. Consider a single download job for all
+  
+  common:
+    # Used together with downloadFile field in each hook;
+    # Check https://github.com/rpardini/tinkerbell-hook/releases/ for updates
+    hookDownloadBaseURL: "https://github.com/rpardini/tinkerbell-hook/releases/download/20240608-2139/"
+    hookDownloadId: "20240608-2139" # If the ID changes, all hooks will be re-downloaded. Can't contain slashes or spaces
+  
+  # Define one key per hook built to be downloaded and made available. Those _must_ match the hardware definitions.
+  # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
+  # to download/prepare it even if no device is using it.
+  hook:
+    "default-hook-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadFile: "hook_x86_64.tar.gz"
+      kernel: "vmlinuz-x86_64"
+      initrd: "initramfs-x86_64"
+      kernelCommandLine: ""
+      bootMode: reboot # @TODO: this needs to be set per-device & per-image as well # kexec
+
+    "latest-lts-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadFile: "hook_latest-lts-x86_64.tar.gz"
+      kernel: "vmlinuz-latest-lts-x86_64"
+      initrd: "initramfs-latest-lts-x86_64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
+    "peg-default-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadFile: "hook_peg-default-amd64.tar.gz"
+      kernel: "vmlinuz-peg-default-amd64"
+      initrd: "initramfs-peg-default-amd64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
+    "dev-default-hook-amd64":
+      enabled: false
+      skipDownload: true # Don't download it, it's already there; just enable it
+      arch: "x86_64"
+      downloadFile: "hook_x86_64.tar.gz"
+      kernel: "vmlinuz-x86_64"
+      initrd: "initramfs-x86_64"
+      kernelCommandLine: ""
+      bootMode: reboot
+
+
+    "default-hook-aarch64":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_aarch64.tar.gz"
+      kernel: "vmlinuz-aarch64"
+      initrd: "initramfs-aarch64"
+      kernelCommandLine: ""
+      bootMode: reboot # kexec is no-go here, kernel problem? (persists after enabling CONFIG_KEXEC & trying to fix TB action)
+
+    "latest-lts-aarch64":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_latest-lts-aarch64.tar.gz"
+      kernel: "vmlinuz-latest-lts-aarch64"
+      initrd: "initramfs-latest-lts-aarch64"
+      kernelCommandLine: ""
+      bootMode: reboot # kexec is no-go here, kernel problem? (persists after enabling CONFIG_KEXEC & trying to fix TB action)
+
+    "armbian-uefi-x86-edge":
+      enabled: false
+      arch: "x86_64"
+      downloadFile: "hook_armbian-uefi-x86-edge.tar.gz"
+      kernel: "vmlinuz-armbian-uefi-x86-edge"
+      initrd: "initramfs-armbian-uefi-x86-edge"
+      kernelCommandLine: "intel_iommu=on iommu=pt"
+      bootMode: kexec
+    
+    
+    "armbian-uefi-arm64-edge":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_armbian-uefi-arm64-edge.tar.gz"
+      kernel: "vmlinuz-armbian-uefi-arm64-edge"
+      initrd: "initramfs-armbian-uefi-arm64-edge"
+      kernelCommandLine: ""
+      bootMode: reboot # still no go with kexec -- this is a TB action problem for sure, not kernel problem?
+    
+    "armbian-meson64-edge":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_armbian-meson64-edge.tar.gz"
+      kernel: "vmlinuz-armbian-meson64-edge"
+      initrd: "initramfs-armbian-meson64-edge"
+      kernelCommandLine: "acpi=off efi=noruntime"
+      bootMode: reboot
+    
+    "armbian-rockchip64-edge":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_armbian-rockchip64-edge.tar.gz"
+      kernel: "vmlinuz-armbian-rockchip64-edge"
+      initrd: "initramfs-armbian-rockchip64-edge"
+      kernelCommandLine: ""
+      bootMode: reboot
+    
+    "armbian-bcm2711-current":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_armbian-bcm2711-current.tar.gz"
+      kernel: "vmlinuz-armbian-bcm2711-current"
+      initrd: "initramfs-armbian-bcm2711-current"
+      kernelCommandLine: ""
+      bootMode: reboot
+    
+    "armbian-rk35xx-vendor":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_armbian-rk35xx-vendor.tar.gz"
+      kernel: "vmlinuz-armbian-rk35xx-vendor"
+      initrd: "initramfs-armbian-rk35xx-vendor"
+      kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
+      bootMode: reboot
+    
+    "armbian-rk3588-edge":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_armbian-rk3588-edge.tar.gz"
+      kernel: "vmlinuz-armbian-rk3588-edge"
+      initrd: "initramfs-armbian-rk3588-edge"
+      kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
+      bootMode: reboot
+    
+    "armbian-rk35xx-legacy":
+      enabled: false
+      arch: "aarch64"
+      downloadFile: "hook_armbian-rk35xx-legacy.tar.gz"
+      kernel: "vmlinuz-armbian-rk35xx-legacy"
+      initrd: "initramfs-armbian-rk35xx-legacy"
+      kernelCommandLine: "" # acpi=off efi=noruntime splash=verbose
+      bootMode: reboot
+  
+  # Define deployment images; we've a few examples using Ubuntu and Armbian
+  # Important: each definition will be auto-enabled when they're referenced in an enabled device. You can force them enabled: true
+  # to download/prepare it even if no device is using it.
+  images:
+    "ubuntu-jammy-cloud-arm64":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://cloud-images.ubuntu.com/daily/server/jammy/current/jammy-server-cloudimg-arm64.img"
+      image: "jammy-server-cloudimg-arm64.raw.gz"
+      conversion: "qemu-to-raw-gzip"
+      doGrowPart: true
+      doUserAndSshSetup: true
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "1" # @schema type:[integer] # @TODO fix so this mustn't be a string
+
+    "ubuntu-jammy-cloud-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "https://cloud-images.ubuntu.com/daily/server/jammy/current/jammy-server-cloudimg-amd64.img"
+      conversion: "qemu-to-raw-gzip"
+      image: "jammy-server-cloudimg-amd64.raw.gz"
+      doGrowPart: true
+      doUserAndSshSetup: true
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "1"
+    
+    "fatso-ubuntu-noble-baremetal-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/ubuntu-noble-baremetal-cloud-k8s-nvidia/ubuntu-noble-baremetal-cloud-k8s-nvidia-v1008.img.gz"
+      conversion: "download-only"
+      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v1008.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "2" # First one is ESP
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
+    
+    "fatso-el9-baremetal-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "https://github.com/k8s-avengers/fatso-images/releases/download/el-9-baremetal/el-9-baremetal-v1008.img.gz"
+      conversion: "download-only"
+      image: "el-9-baremetal-v1008.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      rootfsPartitionNumber: "2" # First one is ESP
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
+    
+    "armbian-uefi-arm64-edge-cloud-k8s":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Uefi-arm64_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
+    
+    "armbian-uefi-x86-edge-cloud-k8s":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Uefi-x86_bookworm_edge_6.8.4-metadata-cloud-k8s-1.28.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      rootfsPartitionNumber: "2" #  1 is ESP, 2 rootfs
+    
+    
+    "armbian-rpardini-rockpro64-edge-uboot":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Rockpro64_bookworm_edge_6.8.2.img.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Rockpro64_bookworm_edge_6.8.2.img.gz"
+      conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      rootfsPartitionNumber: "1"
+    
+    "armbian-rpardini-orangepi3b-edge-uboot":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Orangepi3b_bookworm_edge_6.8.9.img.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Orangepi3b_bookworm_edge_6.8.9.img.gz"
+      conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      rootfsPartitionNumber: "1"
+    
+    "armbian-rpardini-t95z-cloud-edge-uboot":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Aml-t95z-plus_bookworm_edge_6.8.10-metadata-cloud.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Aml-t95z-plus_bookworm_edge_6.8.10-metadata-cloud.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "1" # rootfs is the one and only
+    
+    "armbian-rpardini-odroidhc4-cloud-uboot":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Odroidhc4_bookworm_edge_6.8.10-metadata-cloud.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Odroidhc4_bookworm_edge_6.8.10-metadata-cloud.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "1" # rootfs is the one and only
+    
+    "armbian-rpardini-nanopct6-cloud-uboot":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.06.07-armsurvivors-215/Armbian-unofficial_24.06.07-armsurvivors-215_Nanopct6_bookworm_edge_6.10.0-rc2-metadata-cloud.img.qcow2.xz"
+      image: "Armbian-unofficial_24.06.07-armsurvivors-215_Nanopct6_bookworm_edge_6.10.0-rc2-metadata-cloud.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "1" # rootfs is the one and only
+    
+    "armbian-rpardini-rpi4b-cloud-notefi":
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-190/Armbian-unofficial_24.05.22-armsurvivors-190_Rpi4b_bookworm_current_6.6.31-metadata-cloud.img.qcow2.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-190_Rpi4b_bookworm_current_6.6.31-metadata-cloud.img.gz"
+      conversion: "xz-qcow2-to-img-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "2" # rpi image has a fat32 boot partition (config.txt and such), and partition 2 is the real ext4 rootfs
+    
+    "armbian-rpardini-r58x-vendor-uboot": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Mekotronics-r58x-pro_bookworm_vendor_6.1.43.img.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Mekotronics-r58x-pro_bookworm_vendor_6.1.43.img.gz"
+      conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      rootfsPartitionNumber: "1" # first partition, ext4 rootfs 
+    
+    "armbian-rpardini-r58x-vendor-uefi-cloud": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Mekotronics-r58x-pro_jammy_vendor_6.1.43-cloud-amazingfated-edk2-custom-userdata.img.gz"
+      conversion: "xz-to-gz"
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
+    
+    "rock-5b-edge-trixie-uefi-dtb": # @TODO this is the wrong thing to use. we need a generic EFI-enabled image without forcing DTB. Same for all the others!
+      enabled: false
+      arch: "aarch64"
+      downloadURL: "https://github.com/armsurvivors/armbian-release/releases/download/24.05.22-armsurvivors-189/Armbian-unofficial_24.05.22-armsurvivors-189_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.xz"
+      image: "Armbian-unofficial_24.05.22-armsurvivors-189_Rock-5b_trixie_edge_6.8.4-cloud-edk2-custom-userdata.img.gz"
+      conversion: "xz-to-gz" # @TODO: "qcow2-xz-to-img-gz" one day for completeness
+      doGrowPart: false # Armbian does it itself when booted
+      doUserAndSshSetup: false # Armbian does it itself when booted
+      doFixResolvConf: true
+      rootfsPartitionNumber: "2" # first partition is ESP, 2nd is ext4 rootfs 
+    
+    # local development versions of fatso images; identical 
+    "fatso-ubuntu-noble-local-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "not-used-but-must-change-if-image-changes::ubuntu-noble-baremetal-cloud-k8s-nvidia-v666-local.img.gz"
+      conversion: "local" # should be there already somehow
+      image: "ubuntu-noble-baremetal-cloud-k8s-nvidia-v666-local.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      doInjectHegelCloudInit: true
+      rootfsPartitionNumber: "2" # First one is ESP
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
+    
+    "fatso-el9-local-amd64":
+      enabled: false
+      arch: "x86_64"
+      downloadURL: "not-used-but-must-change-if-image-changes::el-9-baremetal-v666-local.img.gz"
+      conversion: "local" # should be there already somehow
+      image: "el-9-baremetal-v666-local.img.gz"
+      doGrowPart: false
+      doUserAndSshSetup: false
+      doFixResolvConf: false
+      rootfsPartitionNumber: "2" # First one is ESP
+      #doAddEFIBootEntry: true
+      doRestoreGRUBNormalcy: true
+
+
+# Generates CRs triplets with Hardware, Workflow, and Template, using by-id references to the hook and images above.
+
+hardware:
+  common:
+    uefi: true
+    ipv4:
+      gateway: "192.168.99.1" # Must be set, otherwise no internet access; can be overriden per-device
+      netmask: "255.255.255.0"
+      dns: [ "192.168.66.1" ]
+      time_servers: [ "192.168.66.1" ]
+
+  devices: # One entry for each machine
+    
+    # Examples for use in Hook development environment.
+    # There is a `bash build.sh build-run-qemu` command in Hook, that paired with
+    # `export MAC=11:22:33:44:55:66 TINK_SERVER=x.y.z.y` can be used with the below "machines".
+    # The MAC address is not really used by the qemu VM, but is passed via kernel cmdline.
+    "run-qemu-x86":
+      enabled: false
+      arch: x86_64
+      mac: "11:22:33:44:55:66"
+      rootDisk: "/dev/sda"
+      ipv4:
+        address: "192.168.66.245"
+      hookRef: "armbian-uefi-x86-edge" # not really used in this case; Hook dev environment controls the kernel there
+      imageRef: "ubuntu-jammy-cloud-amd64" # defined above
+      extraKernelCommandLine: "console=ttyS0"
+
+    "run-qemu-arm64":
+      enabled: false
+      arch: aarch64
+      mac: "11:22:33:44:55:77"
+      rootDisk: "/dev/vda" # wonder why linuxkit only uses virtio for arm64? intel is sda...
+      ipv4:
+        address: "192.168.66.246"
+      hookRef: "armbian-uefi-arm64-edge" # "default-hook-aarch64" # defined above
+      imageRef: "ubuntu-jammy-cloud-arm64" # defined above
+      extraKernelCommandLine: "console=ttyAMA0"
+    
+    
+    ###
+    ###
+    ###
+    # Examples for virtual machines, ran outside of Hook's build system.
+    # Most virtualization software has support for PXE booting.
+    # You will need to have (bridging/etc) setup to get a proper IP address from a real Smee, etc.
+    "vm03": # For Armbian kernel Hook, and Ubuntu cloud image
+      enabled: false
+      arch: aarch64
+      mac: "52:54:00:01:03:03"
+      rootDisk: "/dev/vdb"
+      ipv4:
+        address: "192.168.99.41"
+      hookRef: "armbian-uefi-arm64-edge"
+      imageRef: "ubuntu-jammy-cloud-arm64"
+      extraKernelCommandLine: "console=ttyAMA0"
+    
+    "vm04": # For default arm64 kernel Hook, and Ubuntu cloud image
+      enabled: false
+      arch: aarch64
+      mac: "52:54:00:01:03:04"
+      rootDisk: "/dev/vdb"
+      ipv4:
+        address: "192.168.99.41"
+      hookRef: "default-hook-aarch64"
+      imageRef: "ubuntu-jammy-cloud-arm64" # defined above
+      extraKernelCommandLine: "console=ttyAMA0"
+
+    "vm08":
+      enabled: false
+      arch: x86_64
+      mac: "52:54:00:01:03:08"
+      rootDisk: "/dev/disk/by-id/virtio-root_disk_serial"
+      ipv4:
+        address: "192.168.99.59"
+      hookRef: "default-hook-amd64"
+      imageRef: "fatso-ubuntu-noble-baremetal-amd64"
+      extraKernelCommandLine: "console=ttyS0"
+      # userData is just standard cloud-init, thus supports #cloud-config and #include etc.
+      # Attention: if ever ran, this gives rpardini root access to your machine. Use your own scripts;
+      userData: |
+        #include https://cloud-init.pardini.net/rpardini/oldskool-rpardini/master/base
+
+    "vm09":
+      enabled: false
+      arch: x86_64
+      mac: "52:54:00:01:03:09"
+      rootDisk: "/dev/vdb"
+      ipv4:
+        address: "192.168.99.42"
+      hookRef: "armbian-uefi-x86-edge" # "default-hook-amd64" # defined above
+      imageRef: "ubuntu-jammy-cloud-amd64" # defined above
+      extraKernelCommandLine: "console=ttyS0"
+    
+    
+    ###
+    ###
+    ###
+    # Examples for actual bare-metal hardware, mostly arm64 SBCs.
+    
+    
+    # Khadas VIM3L and other meson64-based boards (u-boot)
+    "vim3l":
+      enabled: false
+      arch: aarch64
+      mac: "c8:63:14:71:2a:6d"
+      rootDisk: "/dev/mmcblk0"
+      ipv4:
+        address: "192.168.99.51"
+      hookRef: "armbian-meson64-edge"
+      imageRef: "ubuntu-jammy-cloud-arm64"
+      extraKernelCommandLine: "console=ttyAML0,115200"
+    
+    "t95z":
+      enabled: false
+      arch: aarch64
+      mac: "c8:63:14:71:2a:6d"
+      rootDisk: "/dev/sda" # USB Disk plugged in
+      ipv4:
+        address: "192.168.99.27"
+      hookRef: "armbian-meson64-edge"
+      imageRef: "armbian-rpardini-t95z-cloud-edge-uboot"
+      extraKernelCommandLine: "console=ttyAML0,115200"
+    
+    "odroidhc4":
+      enabled: false
+      arch: aarch64
+      mac: "00:1e:06:49:15:91"
+      rootDisk: "/dev/sda" # SATA Disk plugged in
+      ipv4:
+        address: "192.168.99.28"
+      hookRef: "armbian-meson64-edge"
+      imageRef: "armbian-rpardini-odroidhc4-cloud-uboot"
+      extraKernelCommandLine: "console=ttyAML0,115200"
+    
+    # RockPro64 and other rockchip64-based boards (u-boot)
+    "rockpro64":
+      enabled: false
+      arch: aarch64
+      mac: "2a:36:cb:a2:ae:b8"
+      #rootDisk: "/dev/mmcblk2"  # mmcblk2 is the eMMC, mmcblk1 is the SD card
+      rootDisk: "/dev/disk/by-id/mmc-AJTD4R_0x0b05e84d" # much safer to use this style
+      ipv4:
+        address: "192.168.99.52"
+      hookRef: "armbian-rockchip64-edge" # defined above
+      imageRef: "armbian-rpardini-rockpro64-edge-uboot" # defined above
+      extraKernelCommandLine: "console=ttyS2,1500000"
+    
+    "orangepi3b":
+      enabled: false
+      arch: aarch64
+      mac: "b6:a7:96:d5:f1:84"
+      rootDisk: "/dev/disk/by-id/mmc-A3A551_0x2f8c5bd0" # /dev/mmcblk0 is the eMMC
+      ipv4:
+        address: "192.168.99.53"
+      hookRef: "armbian-rockchip64-edge"
+      imageRef: "armbian-rpardini-orangepi3b-edge-uboot" # defined above
+      extraKernelCommandLine: "console=ttyS2,1500000"
+    
+    # Raspberry Pi 4B (bcm2711), using edk2 UEFI firmware on an SD card, and an external NVMe-USB disk
+    "rpi4b":
+      enabled: false
+      arch: aarch64
+      mac: "dc:a6:32:ec:8b:49"
+      rootDisk: "/dev/disk/by-id/wwn-0x3001237923792379"
+      ipv4:
+        address: "192.168.99.54"
+      hookRef: "armbian-bcm2711-current" # works, as long as UEFI is set with ACPI+DTB and no 3gb limit. Use edk2 from https://github.com/pftf/RPi4
+      imageRef: "armbian-rpardini-rpi4b-cloud-notefi"
+      extraKernelCommandLine: "console=tty1 console=ttyAMA0,115200 loglevel=7" # Last console defined "wins", thus use tty1 last if no serial console
+
+    "mekotronics-r58x-pro-via-usb":
+      enabled: false
+      arch: aarch64
+      mac: "3c:18:a0:15:9a:9f" # 3C18A0159A9F 
+      rootDisk: "/dev/nvme0NOENOENOENEyet"
+      ipv4:
+        address: "192.168.99.55"
+      hookRef: "armbian-rk35xx-vendor"
+      imageRef: "armbian-rpardini-r58x-vendor-uefi-cloud" # "armbian-rpardini-r58x-vendor-uboot"
+      extraKernelCommandLine: "console=tty1 console=ttyFIQ0,1500000 " #    # Last console defined "wins", thus use tty1 last if no serial console
+
+    "nanopct6lan1":
+      enabled: false
+      arch: aarch64
+      mac: "8e:b4:90:97:32:30"
+      rootDisk: "/dev/nvme0NOENOENOENEyet"
+      ipv4:
+        address: "192.168.99.171"
+      hookRef: "armbian-rk3588-edge"
+      imageRef: "armbian-rpardini-nanopct6-cloud-uboot" # "armbian-rpardini-r58x-vendor-uboot"
+      extraKernelCommandLine: "console=ttyS2,1500000 " #    # Last console defined "wins", thus use tty1 last if no serial console
+
+    "nanopct6lan2":
+      enabled: false
+      arch: aarch64
+      mac: "8e:b4:90:97:32:31"
+      rootDisk: "/dev/nvme0NOENOENOENEyet"
+      ipv4:
+        address: "192.168.99.172"
+      hookRef: "armbian-rk3588-edge"
+      imageRef: "armbian-rpardini-nanopct6-cloud-uboot" # "armbian-rpardini-r58x-vendor-uboot"
+      extraKernelCommandLine: "console=ttyS2,1500000 " #    # Last console defined "wins", thus use tty1 last if no serial console
