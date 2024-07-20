@@ -89,6 +89,7 @@ http:
     ip: ""
     port: 42113
     tls: false
+    insecureTLS: false
   osieUrl:
     scheme: "http"
     host: ""
