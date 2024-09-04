@@ -1,12 +1,12 @@
-{{- if .Values.deploy }}
+{{- if and .Values.deploy .Values.rbac.enabled }}
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
-  name: {{ .Values.roleBindingName }}
+  name: {{ coalesce .Values.roleBindingName .Values.rbac.roleBindingName }}
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
-  name: {{ .Values.roleName }}
+  name: {{ coalesce .Values.roleName .Values.rbac.roleName }}
 subjects:
   - kind: ServiceAccount
     name: {{ .Values.name }}
