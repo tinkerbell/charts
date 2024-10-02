@@ -26,6 +26,8 @@ roleBindingName: smee-rolebinding
 deployment:
   strategy:
     type: RollingUpdate
+  tolerations: []
+  affinity: {}
 
 # The log level for the container.
 logLevel: "info"
