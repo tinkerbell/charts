@@ -50,9 +50,16 @@ spec:
       restartPolicy: OnFailure
       volumes:
         - name: hook-artifacts
+            {{- if eq .Values.stack.hook.persistence.type "hostpath" }}
           hostPath:
             path: {{ .Values.stack.hook.downloadsDest }}
             type: DirectoryOrCreate
+            {{- else if eq .Values.stack.hook.persistence.type "pvc" }}
+          persistentVolumeClaim:
+            claimName: {{ .Values.stack.hook.persistence.pvc.existingClaim | default "hook-artifacts" }}
+            {{- else }}
+              {{- fail "value for .Values.stack.hook.persistence.type is unsupported" }}
+            {{- end }}
         - name: configmap-volume
           configMap:
             defaultMode: 0700

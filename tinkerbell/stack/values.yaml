@@ -18,6 +18,8 @@ stack:
   lbClass: kube-vip.io/kube-vip-class
   # Once the Kubernetes Gateway API is more stable, we will use that for all services instead of nginx.
   image: nginx:1.25.1
+  
+
   hook:
     enabled: true
     name: hook-files
@@ -27,6 +29,35 @@ stack:
     # downloadURL only works with the > 0.8.1 Hook release because
     # previous Hook versions didn't provide a checksum file.
     downloadURL: https://github.com/tinkerbell/hook/releases/download/v0.9.1
+    persistence:
+      # type must be either "hostpath" or "pvc"
+      # hostpath: only works on a single worker node cluster
+      # https://kubernetes.io/docs/concepts/storage/volumes/#hostpath
+      type: hostpath
+
+      pvc:
+        # PVC accessModes : 
+        # If you include only ReadWriteMany access mode it will allow to download Hook artifacts,
+        # it will also allow to scale up stack deployment on multinode cluster.
+        # If ReadWriteOnce is included, you will need to download manually Hook artifacts into
+        # stack Pod (/usr/share/nginx/html/).
+        # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#access-modes
+        accessModes:
+          - ReadWriteMany
+        size: 1Gi
+        # storageClassName: default
+        # Annotations to include on the PVC object.
+        annotations: {}
+
+        # An optional selector to narrow the Volumes considered for binding to the PVC.
+        # Should be structured the same as a raw PVC selector (see documentation for more info).
+        #
+        # https://kubernetes.io/docs/concepts/storage/persistent-volumes/#selector.
+        selector: {}
+
+        # existingClaim:
+        extraLabels: {}
+
   kubevip:
     enabled: true
     name: kube-vip
